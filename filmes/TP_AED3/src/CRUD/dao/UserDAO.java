@@ -1,364 +1,434 @@
 package CRUD.dao;
 
-import CRUD.util.*;
+import CRUD.index.HashExtensivel;
 import CRUD.model.*;
-
+import CRUD.util.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class UserDAO {
-	
-	private final String FILE = "data/user.bin";
-	
-	public UserDAO() throws IOException{
-		initFile();
-	}
-	
-	private void initFile() throws IOException {
-		
-	    System.out.println("INIT USER DAO");
 
-	    RandomAccessFile raf = FileManeger.open(FILE);
+    private final String FILE = "data/user.bin";
+    private HashExtensivel indice;
 
-	    if (raf.length() == 0) {
+    public UserDAO() throws IOException {
 
-	        raf.writeInt(0); // último ID
+        initFile();
 
-	        raf.close();
+        reconstruirIndice();
+    }
 
-	        // cria admin padrão
-	        User admin = new User(
-	                "admin",
-	                "admin@admin.com",
-	                "123",
-	                true
-	        );
+    private void initFile() throws IOException {
 
-	        create(admin);
 
-	        System.out.println("Administrador padrão criado:");
-	        System.out.println("Email: admin@admin.com");
-	        System.out.println("Senha: 123");
+        RandomAccessFile raf = FileManeger.open(FILE);
 
-	    } else {
-	        raf.close();
-	    }
-	}
-	
-	//create
-	public int create(User x) throws IOException{
+        if (raf.length() == 0) {
 
-	    RandomAccessFile raf = FileManeger.open(FILE);
+            raf.writeInt(0); // último ID
+            raf.close();
 
-	    raf.seek(0);
+            // cria admin SEM usar índice
+            User admin = new User(
+                    "admin",
+                    "admin@admin.com",
+                    "123",
+                    true
+            );
 
-	    int lastID = raf.readInt();
-	    int newID = lastID + 1;
+            createSemIndice(admin);
 
-	    raf.seek(0);
-	    raf.writeInt(newID);
+            System.out.println("Administrador padrão criado:");
+            System.out.println("Email: admin@admin.com");
+            System.out.println("Senha: 123");
 
-	    byte[] nameBytes = x.getUsername().getBytes("UTF-8");
-	    short nameSize = (short) nameBytes.length;
+        } else {
+            raf.close();
+        }
+    }
 
-	    byte[] emailBytes = x.getEmail().getBytes("UTF-8");
-	    short emailSize = (short) emailBytes.length;
+    private int createSemIndice(User x) throws IOException {
 
-	    // XOR na senha
-	    String senhaCripto = Crypto.xor(x.getPassword());
+        RandomAccessFile raf = FileManeger.open(FILE);
 
-	    byte[] passwordBytes = senhaCripto.getBytes("UTF-8");
-	    short passwordSize = (short) passwordBytes.length;
+        raf.seek(0);
+        int lastID = raf.readInt();
+        int newID = lastID + 1;
 
-	    //lápide, ID, tam nome, nome, tam email, email, tam senha, senha, administrador
-	    int recordSize = 1 + 4 + 2 + nameSize + 2 + emailSize + 2 + passwordSize + 1;
+        raf.seek(0);
+        raf.writeInt(newID);
 
-	    raf.seek(raf.length());
+        byte[] nameBytes = x.getUsername().getBytes(StandardCharsets.UTF_8);
+        short nameSize = (short) nameBytes.length;
 
-	    raf.writeInt(recordSize);
+        byte[] emailBytes = x.getEmail().getBytes(StandardCharsets.UTF_8);
+        short emailSize = (short) emailBytes.length;
 
-	    //lápide
-	    raf.writeBoolean(true);
+        String senhaCripto = Crypto.xor(x.getPassword());
+        byte[] passwordBytes = senhaCripto.getBytes(StandardCharsets.UTF_8);
+        short passwordSize = (short) passwordBytes.length;
 
-	    raf.writeInt(newID);
+        int recordSize = 1 + 4 + 2 + nameSize + 2 + emailSize + 2 + passwordSize + 1;
 
-	    raf.writeShort(nameSize);
-	    raf.write(nameBytes);
+        long pos = raf.length();
+        raf.seek(pos);
 
-	    raf.writeShort(emailSize);
-	    raf.write(emailBytes);
+        raf.writeInt(recordSize);
+        raf.writeBoolean(true);
+        raf.writeInt(newID);
 
-	    raf.writeShort(passwordSize);
-	    raf.write(passwordBytes);
+        raf.writeShort(nameSize);
+        raf.write(nameBytes);
 
-	    // administrador
-	    raf.writeBoolean(x.isAdministrator());
+        raf.writeShort(emailSize);
+        raf.write(emailBytes);
 
-	    raf.close();
+        raf.writeShort(passwordSize);
+        raf.write(passwordBytes);
 
-	    return newID;
-	}
-	
-	public User read(int idBusca) throws IOException {
+        raf.writeBoolean(x.isAdministrator());
 
-	    RandomAccessFile raf = FileManeger.open(FILE);
+        raf.close();
 
-	    raf.seek(4);
+        return newID;
+    }
 
-	    while (raf.getFilePointer() < raf.length()) {
+    private void reconstruirIndice() throws IOException {
 
-	        long pos = raf.getFilePointer();
+        indice = new HashExtensivel(2, "user"); // recria estrutura limpa
 
-	        int recordSize = raf.readInt();
-	        boolean active = raf.readBoolean();
+        RandomAccessFile raf = FileManeger.open(FILE);
+        raf.seek(4); // pula header
 
-	        if(!active){
-	            raf.seek(pos + 4 + recordSize);
-	            continue;
-	        }
+        while (raf.getFilePointer() < raf.length()) {
+            try {
 
-	        int id = raf.readInt();
+                long pos = raf.getFilePointer();
 
-	        short nameSize = raf.readShort();
-	        byte[] nameBytes = new byte[nameSize];
-	        raf.readFully(nameBytes);
-	        String username = new String(nameBytes, "UTF-8");
+                int recordSize = raf.readInt();
+                boolean active = raf.readBoolean();
+                int id = raf.readInt();
 
-	        short emailSize = raf.readShort();
-	        byte[] emailBytes = new byte[emailSize];
-	        raf.readFully(emailBytes);
-	        String email = new String(emailBytes, "UTF-8");
+                if (active) {
+                    indice.inserir(id, pos);
+                }
 
-	        short passwordSize = raf.readShort();
-	        byte[] passwordBytes = new byte[passwordSize];
-	        raf.readFully(passwordBytes);
+                raf.seek(pos + 4L + recordSize);
 
-	        String senhaCripto = new String(passwordBytes, "UTF-8");
-	        String password = Crypto.xor(senhaCripto);
+            } catch (Exception e) {
+                System.out.println("ERRO AO LER REGISTRO:");
+                e.printStackTrace();
+                break;
+            }
+        }
 
-	        boolean admin = raf.readBoolean();
+        raf.close();
+    }
 
-	        if(id == idBusca){
-	            raf.close();
-	            return new User(id, username, email, password, admin);
-	        }
+    // =============================
+    // CREATE
+    // =============================
 
-	        raf.seek(pos + 4 + recordSize);
-	    }
+    public int create(User x) throws IOException {
 
-	    raf.close();
-	    return null;
-	}
-	
-	//update 
-	public boolean update(User x) throws IOException {
+        RandomAccessFile raf = FileManeger.open(FILE);
 
-	    RandomAccessFile raf = FileManeger.open(FILE);
+        raf.seek(0);
+        int lastID = raf.readInt();
+        int newID = lastID + 1;
 
-	    raf.seek(4); // pula header
+        raf.seek(0);
+        raf.writeInt(newID);
 
-	    while(raf.getFilePointer() < raf.length()) {
+        byte[] nameBytes = x.getUsername().getBytes(StandardCharsets.UTF_8);
+        short nameSize = (short) nameBytes.length;
 
-	        long pos = raf.getFilePointer();
+        byte[] emailBytes = x.getEmail().getBytes(StandardCharsets.UTF_8);
+        short emailSize = (short) emailBytes.length;
 
-	        int recordSize = raf.readInt();
+        String senhaCripto = Crypto.xor(x.getPassword());
+        byte[] passwordBytes = senhaCripto.getBytes(StandardCharsets.UTF_8);
+        short passwordSize = (short) passwordBytes.length;
 
-	        boolean active = raf.readBoolean();
-	        int tmpID = raf.readInt();
+        int recordSize = 1 + 4 + 2 + nameSize + 2 + emailSize + 2 + passwordSize + 1;
 
-	        if(active && tmpID == x.getID()) {
+        long pos = raf.length();
+        raf.seek(pos);
 
-	            // marca lápide
-	            raf.seek(pos + 4);
-	            raf.writeBoolean(false);
+        raf.writeInt(recordSize);
+        raf.writeBoolean(true);
+        raf.writeInt(newID);
 
-	            raf.close();
+        raf.writeShort(nameSize);
+        raf.write(nameBytes);
 
-	            // recria registro atualizado no final
-	            createWithId(x);
+        raf.writeShort(emailSize);
+        raf.write(emailBytes);
 
-	            return true;
-	        }
+        raf.writeShort(passwordSize);
+        raf.write(passwordBytes);
 
-	        raf.seek(pos + recordSize + 4);
-	    }
+        raf.writeBoolean(x.isAdministrator());
 
-	    raf.close();
+        raf.close();
 
-	    return false;
-	}
+        indice.inserir(newID, pos);
 
-	private void createWithId(User x) throws IOException{
+        return newID;
+    }
 
-	    RandomAccessFile raf = FileManeger.open(FILE);
+    // =============================
+    // READ (hash)
+    // =============================
 
-	    byte[] nameBytes = x.getUsername().getBytes("UTF-8");
-	    short nameSize = (short) nameBytes.length;
+    public User read(int idBusca) throws IOException {
 
-	    byte[] emailBytes = x.getEmail().getBytes("UTF-8");
-	    short emailSize = (short) emailBytes.length;
+        Long pos = indice.buscar(idBusca);
+        if (pos == null) return null;
 
-	    String senhaCripto = Crypto.xor(x.getPassword());
-	    byte[] passwordBytes = senhaCripto.getBytes("UTF-8");
-	    short passwordSize = (short) passwordBytes.length;
+        RandomAccessFile raf = FileManeger.open(FILE);
+        User user = readAtPosition(raf, pos, idBusca);
+        raf.close();
 
-	    int recordSize = 1 + 4 + 2 + nameSize + 2 + emailSize + 2 + passwordSize + 1;
+        return user;
+    }
 
-	    raf.seek(raf.length());
+    private User readAtPosition(RandomAccessFile raf, long pos, int expectedId) throws IOException {
 
-	    raf.writeInt(recordSize);
+        raf.seek(pos);
 
-	    raf.writeBoolean(true);
-	    raf.writeInt(x.getID());
+        raf.readInt();
+        boolean active = raf.readBoolean();
+        int id = raf.readInt();
 
-	    raf.writeShort(nameSize);
-	    raf.write(nameBytes);
+        if (!active || id != expectedId) return null;
 
-	    raf.writeShort(emailSize);
-	    raf.write(emailBytes);
+        short nameSize = raf.readShort();
+        byte[] nameBytes = new byte[nameSize];
+        raf.readFully(nameBytes);
+        String username = new String(nameBytes, StandardCharsets.UTF_8);
 
-	    raf.writeShort(passwordSize);
-	    raf.write(passwordBytes);
+        short emailSize = raf.readShort();
+        byte[] emailBytes = new byte[emailSize];
+        raf.readFully(emailBytes);
+        String email = new String(emailBytes, StandardCharsets.UTF_8);
 
-	    raf.writeBoolean(x.isAdministrator());
+        short passwordSize = raf.readShort();
+        byte[] passwordBytes = new byte[passwordSize];
+        raf.readFully(passwordBytes);
 
-	    raf.close();
-	}
-	
-	//delete (lápide)
-	public boolean delete(int id) throws IOException {
-		
-		RandomAccessFile raf = FileManeger.open(FILE);
-		
-		raf.seek(4);
-		
-		while(raf.getFilePointer() < raf.length()) {
-			
-			long pos = raf.getFilePointer();
-			
-			int recordSize = raf.readInt();
-			
-			boolean active = raf.readBoolean();
-			int tmpID = raf.readInt();
-			
-			if(active && tmpID == id) {
-				
-				raf.seek(pos + 4);
-				raf.writeBoolean(false);
-				
-				raf.close();
-				return true;
-			}
-			
-			raf.seek(pos + recordSize + 4);
-			
-		}
-		
-		raf.close();
-		return false;
-	}
-	
-	public void listAll() throws IOException {
+        String senhaCripto = new String(passwordBytes, StandardCharsets.UTF_8);
+        String password = Crypto.xor(senhaCripto);
 
-	    RandomAccessFile raf = FileManeger.open(FILE);
+        boolean admin = raf.readBoolean();
 
-	    raf.seek(4);
+        return new User(id, username, email, password, admin);
+    }
 
-	    System.out.println("\n--- Users ---");
+    // =============================
+    // UPDATE
+    // =============================
 
-	    while (raf.getFilePointer() < raf.length()) {
+    public boolean update(User x) throws IOException {
 
-	        long pos = raf.getFilePointer();
+        Long pos = indice.buscar(x.getID());
+        if (pos == null) return false;
 
-	        int recordSize = raf.readInt();
-	        boolean active = raf.readBoolean();
+        RandomAccessFile raf = FileManeger.open(FILE);
 
-	        if(!active){
-	            raf.seek(pos + 4 + recordSize);
-	            continue;
-	        }
+        raf.seek(pos + 4);
+        boolean active = raf.readBoolean();
 
-	        int id = raf.readInt();
+        if (!active) {
+            raf.close();
+            return false;
+        }
 
-	        short nameSize = raf.readShort();
-	        byte[] nameBytes = new byte[nameSize];
-	        raf.readFully(nameBytes);
-	        String username = new String(nameBytes, "UTF-8");
+        raf.seek(pos + 4);
+        raf.writeBoolean(false);
+        raf.close();
 
-	        short emailSize = raf.readShort();
-	        byte[] emailBytes = new byte[emailSize];
-	        raf.readFully(emailBytes);
-	        String email = new String(emailBytes, "UTF-8");
+        long novaPos = createWithIdRetornandoPosicao(x);
+        indice.inserir(x.getID(), novaPos);
 
-	        short passwordSize = raf.readShort();
-	        byte[] passwordBytes = new byte[passwordSize];
-	        raf.readFully(passwordBytes);
+        return true;
+    }
 
-	        String senhaCripto = new String(passwordBytes, "UTF-8");
-	        String password = Crypto.xor(senhaCripto);
+    private long createWithIdRetornandoPosicao(User x) throws IOException {
 
-	        boolean admin = raf.readBoolean();
+        RandomAccessFile raf = FileManeger.open(FILE);
 
-	        System.out.println(
-	            id + " | " + username + " | " + email + " | " + password + " | admin: " + admin
-	        );
+        byte[] nameBytes = x.getUsername().getBytes(StandardCharsets.UTF_8);
+        short nameSize = (short) nameBytes.length;
 
-	        raf.seek(pos + 4 + recordSize);
-	    }
+        byte[] emailBytes = x.getEmail().getBytes(StandardCharsets.UTF_8);
+        short emailSize = (short) emailBytes.length;
 
-	    raf.close();
-	}
-	
-	public User readByEmail(String emailBusca) throws IOException {
+        String senhaCripto = Crypto.xor(x.getPassword());
+        byte[] passwordBytes = senhaCripto.getBytes(StandardCharsets.UTF_8);
+        short passwordSize = (short) passwordBytes.length;
 
-	    RandomAccessFile raf = FileManeger.open(FILE);
+        int recordSize = 1 + 4 + 2 + nameSize + 2 + emailSize + 2 + passwordSize + 1;
 
-	    raf.seek(4); // pula header
+        long pos = raf.length();
+        raf.seek(pos);
 
-	    while (raf.getFilePointer() < raf.length()) {
+        raf.writeInt(recordSize);
+        raf.writeBoolean(true);
+        raf.writeInt(x.getID());
 
-	        long pos = raf.getFilePointer();
+        raf.writeShort(nameSize);
+        raf.write(nameBytes);
 
-	        int recordSize = raf.readInt();
-	        boolean active = raf.readBoolean();
+        raf.writeShort(emailSize);
+        raf.write(emailBytes);
 
-	        if(!active){
-	            raf.seek(pos + 4 + recordSize);
-	            continue;
-	        }
+        raf.writeShort(passwordSize);
+        raf.write(passwordBytes);
 
-	        int id = raf.readInt();
+        raf.writeBoolean(x.isAdministrator());
 
-	        short nameSize = raf.readShort();
-	        byte[] nameBytes = new byte[nameSize];
-	        raf.readFully(nameBytes);
-	        String username = new String(nameBytes, "UTF-8");
+        raf.close();
+        return pos;
+    }
 
-	        short emailSize = raf.readShort();
-	        byte[] emailBytes = new byte[emailSize];
-	        raf.readFully(emailBytes);
-	        String email = new String(emailBytes, "UTF-8");
+    // =============================
+    // DELETE
+    // =============================
 
-	        short passwordSize = raf.readShort();
-	        byte[] passwordBytes = new byte[passwordSize];
-	        raf.readFully(passwordBytes);
+    public boolean delete(int id) throws IOException {
 
-	        String senhaCripto = new String(passwordBytes, "UTF-8");
-	        String password = Crypto.xor(senhaCripto);
+        Long pos = indice.buscar(id);
+        if (pos == null) return false;
 
-	        boolean admin = raf.readBoolean();
+        RandomAccessFile raf = FileManeger.open(FILE);
 
-	        if(email.equals(emailBusca)) {
+        raf.seek(pos + 4);
+        boolean active = raf.readBoolean();
 
-	            raf.close();
-	            return new User(id, username, email, password, admin);
-	        }
+        if (!active) {
+            raf.close();
+            return false;
+        }
 
-	        raf.seek(pos + 4 + recordSize);
-	    }
+        raf.seek(pos + 4);
+        raf.writeBoolean(false);
 
-	    raf.close();
-	    return null;
-	}
+        raf.close();
 
+        indice.remover(id);
+        return true;
+    }
+    
+    //reabyemail
+    public User readByEmail(String emailBusca) throws IOException {
+
+        RandomAccessFile raf = FileManeger.open(FILE);
+
+        raf.seek(4);
+
+        while (raf.getFilePointer() < raf.length()) {
+
+            long pos = raf.getFilePointer();
+
+            int recordSize = raf.readInt();
+            boolean active = raf.readBoolean();
+
+            if (!active) {
+                raf.seek(pos + 4 + recordSize);
+                continue;
+            }
+
+            int id = raf.readInt();
+
+            short nameSize = raf.readShort();
+            byte[] nameBytes = new byte[nameSize];
+            raf.readFully(nameBytes);
+            String username = new String(nameBytes, StandardCharsets.UTF_8);
+
+            short emailSize = raf.readShort();
+            byte[] emailBytes = new byte[emailSize];
+            raf.readFully(emailBytes);
+            String email = new String(emailBytes, StandardCharsets.UTF_8);
+
+            short passwordSize = raf.readShort();
+            byte[] passwordBytes = new byte[passwordSize];
+            raf.readFully(passwordBytes);
+
+            String senhaCripto = new String(passwordBytes, StandardCharsets.UTF_8);
+            String password = Crypto.xor(senhaCripto);
+
+            boolean admin = raf.readBoolean();
+
+            if (email.equals(emailBusca)) {
+                raf.close();
+                return new User(id, username, email, password, admin);
+            }
+
+            raf.seek(pos + 4 + recordSize);
+        }
+
+        raf.close();
+        return null;
+    }
+    
+    //LIST ALL
+    public void listAll() throws IOException {
+
+        RandomAccessFile raf = FileManeger.open(FILE);
+
+        raf.seek(4);
+
+        System.out.println("\n--- Users ---");
+
+        while (raf.getFilePointer() < raf.length()) {
+
+            long pos = raf.getFilePointer();
+
+            int recordSize = raf.readInt();
+            boolean active = raf.readBoolean();
+
+            if (!active) {
+                raf.seek(pos + 4 + recordSize);
+                continue;
+            }
+
+            int id = raf.readInt();
+
+            short nameSize = raf.readShort();
+            byte[] nameBytes = new byte[nameSize];
+            raf.readFully(nameBytes);
+            String username = new String(nameBytes, StandardCharsets.UTF_8);
+
+            short emailSize = raf.readShort();
+            byte[] emailBytes = new byte[emailSize];
+            raf.readFully(emailBytes);
+            String email = new String(emailBytes, StandardCharsets.UTF_8);
+
+            short passwordSize = raf.readShort();
+            byte[] passwordBytes = new byte[passwordSize];
+            raf.readFully(passwordBytes);
+
+            String senhaCripto = new String(passwordBytes, StandardCharsets.UTF_8);
+            String password = Crypto.xor(senhaCripto);
+
+            boolean admin = raf.readBoolean();
+
+            System.out.println(
+                id + " | " + username + " | " + email + " | " + password + " | admin: " + admin
+            );
+
+            raf.seek(pos + 4 + recordSize);
+        }
+
+        raf.close();
+    }
+
+    // =============================
+    // DEBUG
+    // =============================
+
+    public void exibirIndice() throws IOException {
+        indice.exibir("usuario");
+    }
 }
-

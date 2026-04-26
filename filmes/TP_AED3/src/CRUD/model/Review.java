@@ -1,32 +1,62 @@
 package CRUD.model;
 
 public class Review {
-	
-	int ID;
-	int userID;
-	int filmID;
-	short rating;
-	String note;
-	
-	public Review(){}
-	
-	public Review(int ID, int userID, int filmID, short rating, String note){
-		this.ID = ID;
-		this.userID = userID;
-		this.filmID = filmID;
-		this.rating = rating;
-		this.note = note;
-	}
-	
-	public int getID() { return ID; }
-	public int getUserID () { return userID; }
-	public int getFilmID() { return filmID; }
-	public short getRating() { return rating; }
-	public String getNote() { return note; }
-	
-	public void setID(int ID) { this.ID = ID; }
-	public void setUserID(int userID) { this.userID = userID; }
-	public void setFilmID (int movieID) { this.filmID = movieID; }
-	public void setRating(short rating) { this.rating = rating; }
-	public void setNote(String note) { this.note = note; }
+
+    private int id;
+    private int userID;
+    private int filmID;
+    private byte rating;
+    private String note;
+
+    // 🔥 ponteiros para lista encadeada
+    private long proxFilm;
+    private long proxUser;
+
+    public Review() {}
+
+    public Review(int id, int userID, int filmID, byte rating, String note) {
+        this.id = id;
+        this.userID = userID;
+        this.filmID = filmID;
+        this.rating = rating;
+        this.note = note;
+        this.proxFilm = -1;
+        this.proxUser = -1;
+    }
+
+    // construtor para criação (sem id)
+    public Review(int userID, int filmID, byte rating, String note) {
+        this.userID = userID;
+        this.filmID = filmID;
+        this.rating = rating;
+        this.note = note;
+        this.proxFilm = -1;
+        this.proxUser = -1;
+    }
+
+    // =========================
+    // GETTERS
+    // =========================
+
+    public int getID() { return id; }
+    public int getUserID() { return userID; }
+    public int getFilmID() { return filmID; }
+    public byte getRating() { return rating; }
+    public String getNote() { return note; }
+
+    public long getProxFilm() { return proxFilm; }
+    public long getProxUser() { return proxUser; }
+
+    // =========================
+    // SETTERS
+    // =========================
+
+    public void setID(int id) { this.id = id; }
+    public void setUserID(int userID) { this.userID = userID; }
+    public void setFilmID(int filmID) { this.filmID = filmID; }
+    public void setRating(byte rating) { this.rating = rating; }
+    public void setNote(String note) { this.note = note; }
+
+    public void setProxFilm(long proxFilm) { this.proxFilm = proxFilm; }
+    public void setProxUser(long proxUser) { this.proxUser = proxUser; }
 }

@@ -5,148 +5,280 @@ import java.util.Scanner;
 
 import CRUD.dao.ReviewDAO;
 import CRUD.model.Review;
+import CRUD.sort.ExternalSortReview;
 
 public class AvaliacaoMenu {
 
-	public static void menuAvaliacao(Scanner sc) throws Exception {
+    public static void menuAvaliacao(Scanner sc) {
 
-		ReviewDAO reviewDao = new ReviewDAO();
-		int op;
+        ReviewDAO reviewDao;
 
-	    do {
-	        System.out.println("\n=== MENU AVALIAÇÃO ===");
-	        System.out.println("1 - Cadastrar avaliação");
-	        System.out.println("2 - Buscar avaliação");
-	        System.out.println("3 - Listar avaliações");
-	        System.out.println("4 - Atualizar avaliação");
-	        System.out.println("5 - Excluir avaliação");
-	        System.out.println("0 - Voltar para o menu principal");
-	        System.out.print("Opção: ");
+        try {
+            reviewDao = new ReviewDAO();
+        } catch (Exception e) {
+            System.out.println("Erro ao inicializar ReviewDAO: " + e.getMessage());
+            return;
+        }
 
-	        op = sc.nextInt();
-	        sc.nextLine();
+        int op = -1;
 
-	        switch (op) {
-	            case 1: 
-	            	cadastrarReview(reviewDao, sc); 
-	            	break;
+        do {
+            System.out.println("\n=== MENU AVALIAÇÃO ===");
+            System.out.println("1 - Cadastrar avaliação");
+            System.out.println("2 - Buscar avaliação");
+            System.out.println("3 - Listar TODAS avaliações");
+            System.out.println("4 - Listar avaliações por filme (HASH + ENCADEAMENTO)");
+            System.out.println("5 - Listar avaliações por usuário (HASH + ENCADEAMENTO)");
+            System.out.println("6 - Atualizar avaliação");
+            System.out.println("7 - Excluir avaliação");
+            System.out.println("8 - Ordenar avaliações por nota");
+            System.out.println("9 - Exibir hash extensível");
+            System.out.println("0 - Voltar");
+            System.out.print("Opção: ");
 
-	            case 2: 
-	            	buscarReview(reviewDao, sc); 
-	            	break;
+            try {
+                op = sc.nextInt();
+                sc.nextLine();
+            } catch (Exception e) {
+                System.out.println("Entrada inválida!");
+                sc.nextLine();
+                continue;
+            }
 
-	            case 3:
-	            	listarReview(reviewDao); 
-	            	break;
+            try {
+                switch (op) {
 
-	            case 4:
-	            	atualizarReview(reviewDao, sc); 
-	            	break;
+                    case 1:
+                        cadastrarReview(reviewDao, sc);
+                        break;
 
-	            case 5:
-	            	excluirReview(reviewDao, sc);
-	            	break;
-	        }
+                    case 2:
+                        buscarReview(reviewDao, sc);
+                        break;
 
-	    } while (op != 0);
-	}
+                    case 3:
+                        listarTodas(reviewDao);
+                        break;
 
-	private static void cadastrarReview(ReviewDAO reviewDao, Scanner sc) throws IOException {
+                    case 4:
+                        listarPorFilme(reviewDao, sc);
+                        break;
 
-	    System.out.print("ID do Usuário: ");
-	    int uId = sc.nextInt();
+                    case 5:
+                        listarPorUsuario(reviewDao, sc);
+                        break;
 
-	    System.out.print("ID do Filme: ");
-	    int fId = sc.nextInt();
+                    case 6:
+                        atualizarReview(reviewDao, sc);
+                        break;
 
-	    System.out.print("Nota (1-5): ");
-	    short rating = sc.nextShort();
-	    sc.nextLine();
+                    case 7:
+                        excluirReview(reviewDao, sc);
+                        break;
 
-	    System.out.print("Comentário: ");
-	    String note = sc.nextLine();
+                    case 8:
+                        ordenarAvaliacoes();
+                        break;
 
-	    Review r = new Review(0, uId, fId, rating, note);
+                    case 9:
+                        exibirHash(reviewDao);
+                        break;
 
-	    int id = reviewDao.create(r);
+                    case 0:
+                        System.out.println("Voltando...");
+                        break;
 
-	    System.out.println("Avaliação salva com ID: " + id);
-	}
+                    default:
+                        System.out.println("Opção inválida.");
+                        break;
+                }
 
-	private static void buscarReview(ReviewDAO reviewDao, Scanner sc) throws IOException {
+            } catch (Exception e) {
+                System.out.println("Erro na operação: " + e.getMessage());
+            }
 
-	    System.out.print("ID da avaliação: ");
-	    int id = sc.nextInt();
-	    sc.nextLine();
+        } while (op != 0);
+    }
 
-	    Review r = reviewDao.read(id);
+    // ================= CREATE =================
 
-	    if (r == null) {
-	        System.out.println("Avaliação não encontrada.");
-	    } else {
-	        mostrarReview(r);
-	    }
-	}
+    private static void cadastrarReview(ReviewDAO reviewDao, Scanner sc) {
 
-	private static void mostrarReview(Review r) {
+        try {
+            System.out.print("ID do Usuário: ");
+            int uId = sc.nextInt();
 
-	    System.out.println("\n--- AVALIAÇÃO ---");
-	    System.out.println("ID: " + r.getID());
-	    System.out.println("Usuário ID: " + r.getUserID());
-	    System.out.println("Filme ID: " + r.getFilmID());
-	    System.out.println("Nota: " + r.getRating());
-	    System.out.println("Comentário: " + r.getNote());
-	}
+            System.out.print("ID do Filme: ");
+            int fId = sc.nextInt();
 
-	private static void listarReview(ReviewDAO reviewDao) throws IOException {
-		reviewDao.listAll();
-	}
+            System.out.print("Nota (0-10): ");
+            byte rating = sc.nextByte();
+            sc.nextLine();
 
-	private static void atualizarReview(ReviewDAO reviewDao, Scanner sc) throws IOException {
+            if (rating < 0 || rating > 10) {
+                System.out.println("Nota inválida!");
+                return;
+            }
 
-	    System.out.print("ID da avaliação: ");
-	    int id = sc.nextInt();
-	    sc.nextLine();
+            System.out.print("Comentário: ");
+            String note = sc.nextLine();
 
-	    Review r = reviewDao.read(id);
+            Review r = new Review(uId, fId, rating, note);
 
-	    if (r == null) {
-	        System.out.println("Avaliação não encontrada.");
-	        return;
-	    }
+            int id = reviewDao.create(r);
 
-	    System.out.println("Dados atuais: Nota " + r.getRating() + " | Comentário: " + r.getNote());
+            System.out.println("Avaliação salva com ID: " + id);
 
-	    System.out.print("Nova nota (0 para manter): ");
-	    short rating = sc.nextShort();
-	    sc.nextLine();
+        } catch (Exception e) {
+            System.out.println("Erro ao cadastrar: " + e.getMessage());
+        }
+    }
 
-	    if (rating != 0) {
-	        r.setRating(rating);
-	    }
+    // ================= READ =================
 
-	    System.out.print("Novo comentário (enter para manter): ");
-	    String note = sc.nextLine();
+    private static void buscarReview(ReviewDAO reviewDao, Scanner sc) throws IOException {
 
-	    if (!note.isEmpty()) {
-	        r.setNote(note);
-	    }
+        System.out.print("ID da avaliação: ");
+        int id = sc.nextInt();
+        sc.nextLine();
 
-	    if (reviewDao.update(r))
-	        System.out.println("Avaliação atualizada!");
-	    else
-	        System.out.println("Erro ao atualizar.");
-	}
+        Review r = reviewDao.read(id);
 
-	private static void excluirReview(ReviewDAO reviewDao, Scanner sc) throws IOException {
+        if (r == null) {
+            System.out.println("Avaliação não encontrada.");
+        } else {
+            mostrarReview(r);
+        }
+    }
 
-	    System.out.print("ID da avaliação: ");
-	    int id = sc.nextInt();
-	    sc.nextLine();
+    private static void mostrarReview(Review r) {
+        System.out.println("\n--- AVALIAÇÃO ---");
+        System.out.println("ID: " + r.getID());
+        System.out.println("Usuário ID: " + r.getUserID());
+        System.out.println("Filme ID: " + r.getFilmID());
+        System.out.println("Nota: " + r.getRating());
+        System.out.println("Comentário: " + r.getNote());
+    }
 
-	    if (reviewDao.delete(id))
-	        System.out.println("Avaliação excluída.");
-	    else
-	        System.out.println("Avaliação não encontrada.");
-	}
+    // ================= LISTAS COM HASH =================
+
+    private static void listarPorFilme(ReviewDAO reviewDao, Scanner sc) throws IOException {
+
+        System.out.print("ID do Filme: ");
+        int filmID = sc.nextInt();
+        sc.nextLine();
+
+        System.out.println("\n>>> BUSCA VIA HASH + LISTA ENCADEADA <<<");
+
+        reviewDao.listByFilm(filmID);
+    }
+
+    private static void listarPorUsuario(ReviewDAO reviewDao, Scanner sc) throws IOException {
+
+        System.out.print("ID do Usuário: ");
+        int userID = sc.nextInt();
+        sc.nextLine();
+
+        System.out.println("\n>>> BUSCA VIA HASH + LISTA ENCADEADA <<<");
+
+        reviewDao.listByUser(userID);
+    }
+
+    private static void listarTodas(ReviewDAO reviewDao) throws IOException {
+        reviewDao.listAll();
+    }
+
+    // ================= UPDATE =================
+
+    private static void atualizarReview(ReviewDAO reviewDao, Scanner sc) throws Exception {
+
+        System.out.print("ID da avaliação: ");
+        int id = sc.nextInt();
+        sc.nextLine();
+
+        Review r = reviewDao.read(id);
+
+        if (r == null) {
+            System.out.println("Avaliação não encontrada.");
+            return;
+        }
+
+        System.out.println("Dados atuais:");
+        mostrarReview(r);
+
+        System.out.print("Nova nota (-1 para manter): ");
+        byte rating = sc.nextByte();
+        sc.nextLine();
+
+        if (rating != -1) {
+            if (rating < 0 || rating > 10) {
+                System.out.println("Nota inválida!");
+                return;
+            }
+            r.setRating(rating);
+        }
+
+        System.out.print("Novo comentário (enter para manter): ");
+        String note = sc.nextLine();
+
+        if (!note.isEmpty()) {
+            r.setNote(note);
+        }
+
+        if (reviewDao.update(r)) {
+            System.out.println("Avaliação atualizada!");
+        } else {
+            System.out.println("Erro ao atualizar.");
+        }
+    }
+
+    // ================= DELETE =================
+
+    private static void excluirReview(ReviewDAO reviewDao, Scanner sc) throws IOException {
+
+        System.out.print("ID da avaliação: ");
+        int id = sc.nextInt();
+        sc.nextLine();
+
+        if (reviewDao.delete(id)) {
+            System.out.println("Avaliação excluída.");
+        } else {
+            System.out.println("Avaliação não encontrada.");
+        }
+    }
+
+    // ================= SORT =================
+
+    private static void ordenarAvaliacoes() {
+
+        try {
+            ExternalSortReview sort = new ExternalSortReview();
+            sort.ordenar();
+
+            System.out.println("\nAvaliações ordenadas com sucesso!");
+            System.out.println("Arquivo: data/review_ordenado.bin");
+
+        } catch (Exception e) {
+            System.out.println("Erro ao ordenar: " + e.getMessage());
+        }
+    }
+
+    // ================= HASH =================
+
+    private static void exibirHash(ReviewDAO reviewDao) {
+
+        try {
+            System.out.println("\n--- HASH POR ID ---");
+            reviewDao.exibirIndice();
+
+            System.out.println("\n--- HASH POR FILME ---");
+            reviewDao.exibirIndiceFilm();
+
+            System.out.println("\n--- HASH POR USUÁRIO ---");
+            reviewDao.exibirIndiceUser();
+
+        } catch (Exception e) {
+            System.out.println("Erro ao exibir hash: " + e.getMessage());
+        }
+    }
 }

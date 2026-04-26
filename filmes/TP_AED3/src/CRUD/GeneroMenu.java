@@ -1,16 +1,15 @@
 package CRUD;
 
-import java.io.IOException;
 import java.util.Scanner;
 
-import CRUD.dao.GenreDAO;
+import CRUD.controller.GenreController;
 import CRUD.model.Genre;
 
 public class GeneroMenu {
 
     public static void menuGenero(Scanner sc) throws Exception {
 
-        GenreDAO genreDao = new GenreDAO();
+        GenreController controller = new GenreController(); // 🔥 mudou
         int op;
 
         do {
@@ -21,6 +20,7 @@ public class GeneroMenu {
             System.out.println("3 - Listar gêneros");
             System.out.println("4 - Atualizar gênero");
             System.out.println("5 - Excluir gênero");
+            System.out.println("6 - Exibir hash extensível"); // 🔥 NOVO
             System.out.println("0 - Voltar para o menu principal");
             System.out.print("Opção: ");
 
@@ -30,48 +30,57 @@ public class GeneroMenu {
             switch (op) {
 
                 case 1:
-                    cadastrarGenero(genreDao, sc);
+                    cadastrarGenero(controller, sc);
                     break;
 
                 case 2:
-                    buscarGenero(genreDao, sc);
+                    buscarGenero(controller, sc);
                     break;
 
                 case 3:
-                    listarGenero(genreDao);
+                    listarGenero(controller);
                     break;
 
                 case 4:
-                    atualizarGenero(genreDao, sc);
+                    atualizarGenero(controller, sc);
                     break;
 
                 case 5:
-                    excluirGenero(genreDao, sc);
+                    excluirGenero(controller, sc);
                     break;
+
+                case 6:
+                    exibirHash(controller); // 🔥 NOVO
+                    break;
+
+                case 0:
+                    System.out.println("Voltando...");
+                    break;
+
+                default:
+                    System.out.println("Opção inválida.");
             }
 
         } while (op != 0);
     }
 
-    private static void cadastrarGenero(GenreDAO genreDao, Scanner sc) throws IOException {
+    private static void cadastrarGenero(GenreController controller, Scanner sc) throws Exception {
 
         System.out.print("Nome do gênero: ");
         String nome = sc.nextLine();
 
-        Genre g = new Genre(0, nome);
-
-        int id = genreDao.create(g);
+        int id = controller.createGenre(nome);
 
         System.out.println("Gênero salvo com ID: " + id);
     }
 
-    private static void buscarGenero(GenreDAO genreDao, Scanner sc) throws IOException {
+    private static void buscarGenero(GenreController controller, Scanner sc) throws Exception {
 
         System.out.print("ID do gênero: ");
         int id = sc.nextInt();
         sc.nextLine();
 
-        Genre g = genreDao.read(id);
+        Genre g = controller.readGenre(id);
 
         if (g == null)
             System.out.println("Gênero não encontrado.");
@@ -86,18 +95,18 @@ public class GeneroMenu {
         System.out.println("Nome: " + g.getName());
     }
 
-    private static void listarGenero(GenreDAO genreDao) throws IOException {
+    private static void listarGenero(GenreController controller) throws Exception {
 
-        genreDao.listAll();
+        controller.listGenres();
     }
 
-    private static void atualizarGenero(GenreDAO genreDao, Scanner sc) throws IOException {
+    private static void atualizarGenero(GenreController controller, Scanner sc) throws Exception {
 
         System.out.print("ID do gênero: ");
         int id = sc.nextInt();
         sc.nextLine();
 
-        Genre g = genreDao.read(id);
+        Genre g = controller.readGenre(id);
 
         if (g == null) {
             System.out.println("Gênero não encontrado.");
@@ -112,7 +121,7 @@ public class GeneroMenu {
         if (!nome.isEmpty())
             g.setName(nome);
 
-        boolean ok = genreDao.update(g);
+        boolean ok = controller.updateGenre(g);
 
         if (ok)
             System.out.println("Gênero atualizado!");
@@ -120,15 +129,19 @@ public class GeneroMenu {
             System.out.println("Erro ao atualizar.");
     }
 
-    private static void excluirGenero(GenreDAO genreDao, Scanner sc) throws IOException {
+    private static void excluirGenero(GenreController controller, Scanner sc) throws Exception {
 
         System.out.print("ID do gênero: ");
         int id = sc.nextInt();
         sc.nextLine();
 
-        if (genreDao.delete(id))
+        if (controller.deleteGenre(id))
             System.out.println("Gênero excluído.");
         else
             System.out.println("Gênero não encontrado.");
+    }
+
+    private static void exibirHash(GenreController controller) throws Exception {
+        controller.exibirIndice(); // 🔥 igual filme
     }
 }
