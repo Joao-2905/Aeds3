@@ -3,7 +3,7 @@ Sistema para avaliação de filmes
 
 ---
 
-## ▶️ Como executar (sem Eclipse)
+## ▶️ Como executar
 
 1. Baixe o arquivo `filmes.jar`  
    > Recomenda-se salvar em uma **pasta vazia**
@@ -35,7 +35,8 @@ O sistema possui dois tipos de usuários:
 
 ### 👥 Usuário
 - Acesso à própria conta
-- Criação de avaliações *(funcionalidade ainda não disponível)*
+- Criação de avaliações
+- Vizualização de avaliações
 
 ### 🛠️ Administrador
 - Possui todas as permissões de um usuário
@@ -43,6 +44,7 @@ O sistema possui dois tipos de usuários:
   - Usuários
   - Gêneros
   - Filmes
+  - Avaliações
 
 ---
 
@@ -52,3 +54,5 @@ O sistema possui dois tipos de usuários:
 - Para evitar problemas, o sistema já vem com um **administrador padrão**
 
 👉 As credenciais desse administrador são exibidas automaticamente na **primeira execução do sistema**
+email: admin@admin.com
+senha: 123
