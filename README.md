@@ -36,7 +36,7 @@ O sistema possui dois tipos de usuários:
 ### 👥 Usuário
 - Acesso à própria conta
 - Criação de avaliações
-- Vizualização de avaliações
+- Visualização de avaliações
 
 ### 🛠️ Administrador
 - Possui todas as permissões de um usuário
