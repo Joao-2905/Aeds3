@@ -54,5 +54,6 @@ O sistema possui dois tipos de usuários:
 - Para evitar problemas, o sistema já vem com um **administrador padrão**
 
 👉 As credenciais desse administrador são exibidas automaticamente na **primeira execução do sistema**
-email: admin@admin.com
-senha: 123
+
+- email: admin@admin.com
+- senha: 123
