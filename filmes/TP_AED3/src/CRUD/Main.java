@@ -8,6 +8,7 @@ import java.util.Scanner;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
+		
 
 	    Scanner sc = new Scanner(System.in);
 	    UserController userController = new UserController();
@@ -108,11 +109,13 @@ public class Main {
                 System.out.println("1 - Administração de usuários");
                 System.out.println("2 - Administração de gêneros");
                 System.out.println("3 - Administração de filmes");
-                System.out.println("4 - Minha conta");
+                System.out.println("4 - Administração de avaliacaoes");
+                System.out.println("5 - Minha conta");
 
             } else {
 
                 System.out.println("1 - Minha conta");
+                System.out.println("2 - Avaliacoes");
 
             }
 
@@ -140,6 +143,10 @@ public class Main {
                     break;
 
                 case 4:
+                    AvaliacaoMenu.menuAvaliacao(sc);
+                    break;
+
+                case 5:
                     AccountMenu.menuConta(usuarioLogado, sc);
                     break;
             }
@@ -150,6 +157,10 @@ public class Main {
 
                     case 1:
                         AccountMenu.menuConta(usuarioLogado, sc);
+                        break;
+
+                    case 2: 
+                        UserReviewMenu.menu(usuarioLogado, sc);
                         break;
                 }
             }

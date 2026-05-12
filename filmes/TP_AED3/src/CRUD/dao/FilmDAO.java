@@ -2,23 +2,50 @@ package CRUD.dao;
 
 import CRUD.model.*;
 import CRUD.util.*;
+import CRUD.index.HashExtensivel;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class FilmDAO {
 
     private final String FILE = "data/film.bin";
+    private HashExtensivel indice;
 
     public FilmDAO() throws IOException {
         initFile();
+        indice = new HashExtensivel(2, "filme");
+        reconstruirIndice();
     }
 
     private void initFile() throws IOException {
-
         RandomAccessFile raf = FileManeger.open(FILE);
 
         if (raf.length() == 0) {
             raf.writeInt(0);
+        }
+
+        raf.close();
+    }
+
+    private void reconstruirIndice() throws IOException {
+        indice = new HashExtensivel(2, "filme");
+
+        RandomAccessFile raf = FileManeger.open(FILE);
+        raf.seek(4); // pula header
+
+        while (raf.getFilePointer() < raf.length()) {
+            long pos = raf.getFilePointer();
+
+            int recordSize = raf.readInt();
+            boolean active = raf.readBoolean();
+            int id = raf.readInt();
+
+            if (active) {
+                indice.inserir(id, pos);
+            }
+
+            raf.seek(pos + 4L + recordSize);
         }
 
         raf.close();
@@ -35,8 +62,8 @@ public class FilmDAO {
         raf.seek(0);
         raf.writeInt(newID);
 
-        byte[] titleBytes = f.getTitle().getBytes("UTF-8");
-        byte[] descBytes = f.getDescription().getBytes("UTF-8");
+        byte[] titleBytes = f.getTitle().getBytes(StandardCharsets.UTF_8);
+        byte[] descBytes = f.getDescription().getBytes(StandardCharsets.UTF_8);
 
         String[] directors = f.getDirectors();
 
@@ -48,13 +75,14 @@ public class FilmDAO {
                 4;
 
         for (String d : directors) {
-            byte[] db = d.getBytes("UTF-8");
+            byte[] db = d.getBytes(StandardCharsets.UTF_8);
             recordSize += 2 + db.length;
         }
 
         recordSize += 4 + 4;
 
-        raf.seek(raf.length());
+        long pos = raf.length();
+        raf.seek(pos);
 
         raf.writeInt(recordSize);
 
@@ -72,9 +100,7 @@ public class FilmDAO {
         raf.writeInt(directors.length);
 
         for (String d : directors) {
-
-            byte[] db = d.getBytes("UTF-8");
-
+            byte[] db = d.getBytes(StandardCharsets.UTF_8);
             raf.writeShort(db.length);
             raf.write(db);
         }
@@ -84,102 +110,95 @@ public class FilmDAO {
 
         raf.close();
 
+        indice.inserir(newID, pos);
+
         return newID;
     }
 
     public Film read(int id) throws IOException {
 
-        RandomAccessFile raf = FileManeger.open(FILE);
-
-        raf.seek(4);
-
-        while (raf.getFilePointer() < raf.length()) {
-
-            long pos = raf.getFilePointer();
-
-            int recordSize = raf.readInt();
-
-            boolean active = raf.readBoolean();
-            int tmpID = raf.readInt();
-
-            if (active && tmpID == id) {
-
-                short titleSize = raf.readShort();
-                byte[] titleBytes = new byte[titleSize];
-                raf.readFully(titleBytes);
-                String title = new String(titleBytes, "UTF-8");
-
-                short descSize = raf.readShort();
-                byte[] descBytes = new byte[descSize];
-                raf.readFully(descBytes);
-                String desc = new String(descBytes, "UTF-8");
-
-                int date = raf.readInt();
-
-                int qtdDirectors = raf.readInt();
-
-                String[] directors = new String[qtdDirectors];
-
-                for (int i = 0; i < qtdDirectors; i++) {
-
-                    short size = raf.readShort();
-
-                    byte[] db = new byte[size];
-                    raf.readFully(db);
-
-                    directors[i] = new String(db, "UTF-8");
-                }
-
-                float rating = raf.readFloat();
-                int totalReviews = raf.readInt();
-
-                raf.close();
-
-                return new Film(tmpID, title, desc, date, directors, rating, totalReviews);
-            }
-
-            raf.seek(pos + recordSize + 4);
+        Long pos = indice.buscar(id);
+        if (pos == null) {
+            return null;
         }
 
+        RandomAccessFile raf = FileManeger.open(FILE);
+        Film film = readAtPosition(raf, pos, id);
         raf.close();
-        return null;
+
+        return film;
+    }
+
+    private Film readAtPosition(RandomAccessFile raf, long pos, int expectedId) throws IOException {
+        raf.seek(pos);
+
+        raf.readInt(); // recordSize
+        boolean active = raf.readBoolean();
+        int tmpID = raf.readInt();
+
+        if (!active || tmpID != expectedId) {
+            return null;
+        }
+
+        short titleSize = raf.readShort();
+        byte[] titleBytes = new byte[titleSize];
+        raf.readFully(titleBytes);
+        String title = new String(titleBytes, StandardCharsets.UTF_8);
+
+        short descSize = raf.readShort();
+        byte[] descBytes = new byte[descSize];
+        raf.readFully(descBytes);
+        String desc = new String(descBytes, StandardCharsets.UTF_8);
+
+        int date = raf.readInt();
+
+        int qtdDirectors = raf.readInt();
+        String[] directors = new String[qtdDirectors];
+
+        for (int i = 0; i < qtdDirectors; i++) {
+            short size = raf.readShort();
+
+            byte[] db = new byte[size];
+            raf.readFully(db);
+
+            directors[i] = new String(db, StandardCharsets.UTF_8);
+        }
+
+        float rating = raf.readFloat();
+        int totalReviews = raf.readInt();
+
+        return new Film(tmpID, title, desc, date, directors, rating, totalReviews);
     }
 
     public boolean delete(int id) throws IOException {
 
-        RandomAccessFile raf = FileManeger.open(FILE);
-
-        raf.seek(4);
-
-        while (raf.getFilePointer() < raf.length()) {
-
-            long pos = raf.getFilePointer();
-
-            int recordSize = raf.readInt();
-
-            boolean active = raf.readBoolean();
-            int tmpID = raf.readInt();
-
-            if (active && tmpID == id) {
-
-                raf.seek(pos + 4);
-                raf.writeBoolean(false);
-
-                raf.close();
-                return true;
-            }
-
-            raf.seek(pos + recordSize + 4);
+        Long pos = indice.buscar(id);
+        if (pos == null) {
+            return false;
         }
 
+        RandomAccessFile raf = FileManeger.open(FILE);
+
+        raf.seek(pos + 4); // pula tamanho do registro
+        boolean active = raf.readBoolean();
+
+        if (!active) {
+            raf.close();
+            return false;
+        }
+
+        raf.seek(pos + 4);
+        raf.writeBoolean(false);
+
         raf.close();
-        return false;
+
+        indice.remover(id);
+        return true;
     }
 
     public void listAll() throws IOException {
 
         RandomAccessFile raf = FileManeger.open(FILE);
-
         raf.seek(4);
 
         System.out.println("\n--- FILMES ---");
@@ -193,7 +212,6 @@ public class FilmDAO {
             int id = raf.readInt();
 
             if (lapide) {
-
                 Film f = read(id);
 
                 if (f != null) {
@@ -220,49 +238,41 @@ public class FilmDAO {
 
         raf.close();
     }
-    
+
     public boolean update(Film f) throws IOException {
 
-        RandomAccessFile raf = FileManeger.open(FILE);
-
-        raf.seek(4); // pula header
-
-        while (raf.getFilePointer() < raf.length()) {
-
-            long pos = raf.getFilePointer();
-
-            int recordSize = raf.readInt();
-
-            boolean active = raf.readBoolean();
-            int tmpID = raf.readInt();
-
-            if (active && tmpID == f.getID()) {
-
-                raf.seek(pos + 4); // posição da lápide
-                raf.writeBoolean(false);
-
-                raf.close();
-
-                createWithId(f);
-
-                return true;
-            }
-
-            raf.seek(pos + recordSize + 4);
+        Long pos = indice.buscar(f.getID());
+        if (pos == null) {
+            return false;
         }
 
+        RandomAccessFile raf = FileManeger.open(FILE);
+
+        raf.seek(pos + 4); // pula tamanho do registro
+        boolean active = raf.readBoolean();
+
+        if (!active) {
+            raf.close();
+            return false;
+        }
+
+        raf.seek(pos + 4); // posição da lápide
+        raf.writeBoolean(false);
+
         raf.close();
-        return false;
+
+        long novaPos = createWithIdRetornandoPosicao(f);
+        indice.inserir(f.getID(), novaPos);
+
+        return true;
     }
-    
-    private void createWithId(Film f) throws IOException {
+
+    private long createWithIdRetornandoPosicao(Film f) throws IOException {
 
         RandomAccessFile raf = FileManeger.open(FILE);
 
-        raf.seek(raf.length());
-
-        byte[] titleBytes = f.getTitle().getBytes("UTF-8");
-        byte[] descBytes = f.getDescription().getBytes("UTF-8");
+        byte[] titleBytes = f.getTitle().getBytes(StandardCharsets.UTF_8);
+        byte[] descBytes = f.getDescription().getBytes(StandardCharsets.UTF_8);
 
         String[] directors = f.getDirectors();
 
@@ -274,11 +284,14 @@ public class FilmDAO {
                 4;
 
         for (String d : directors) {
-            byte[] db = d.getBytes("UTF-8");
+            byte[] db = d.getBytes(StandardCharsets.UTF_8);
             recordSize += 2 + db.length;
         }
 
         recordSize += 4 + 4;
+
+        long pos = raf.length();
+        raf.seek(pos);
 
         raf.writeInt(recordSize);
 
@@ -296,8 +309,7 @@ public class FilmDAO {
         raf.writeInt(directors.length);
 
         for (String d : directors) {
-
-            byte[] db = d.getBytes("UTF-8");
+            byte[] db = d.getBytes(StandardCharsets.UTF_8);
 
             raf.writeShort(db.length);
             raf.write(db);
@@ -307,5 +319,10 @@ public class FilmDAO {
         raf.writeInt(f.getTotalReviews());
 
         raf.close();
+        return pos;
+    }
+
+    public void exibirIndice() throws IOException {
+        indice.exibir("filme");
     }
 }

@@ -7,19 +7,19 @@ import CRUD.controller.FilmController;
 
 public class FilmeMenu {
 
-	public static void menuFilme(Scanner sc) throws Exception {
+    public static void menuFilme(Scanner sc) throws Exception {
 
-		FilmController controller = new FilmController();
-		int op;
+        FilmController controller = new FilmController();
+        int op;
 
-		do {
-
+        do {
             System.out.println("\n=== MENU FILME ===");
             System.out.println("1 - Cadastrar filme");
             System.out.println("2 - Buscar filme");
             System.out.println("3 - Listar filmes");
             System.out.println("4 - Atualizar filme");
             System.out.println("5 - Excluir filme");
+            System.out.println("6 - Exibir hash extensível");
             System.out.println("0 - Voltar para o menu principal");
             System.out.print("Opção: ");
 
@@ -27,62 +27,73 @@ public class FilmeMenu {
             sc.nextLine();
 
             switch (op) {
-	
-	            case 1:
-	                cadastrarFilme(controller, sc);
-	                break;
-	
-	            case 2:
-	                buscarFilme(controller, sc);
-	                break;
-	
-	            case 3:
-	                listarFilme(controller);
-	                break;
-	
-	            case 4:
-	                atualizarFilme(controller, sc);
-	                break;
-	
-	            case 5:
-	                excluirFilme(controller, sc);
-	                break;
+                case 1:
+                    cadastrarFilme(controller, sc);
+                    break;
+
+                case 2:
+                    buscarFilme(controller, sc);
+                    break;
+
+                case 3:
+                    listarFilme(controller);
+                    break;
+
+                case 4:
+                    atualizarFilme(controller, sc);
+                    break;
+
+                case 5:
+                    excluirFilme(controller, sc);
+                    break;
+
+                case 6:
+                    exibirHash(controller);
+                    break;
+
+                case 0:
+                    System.out.println("Voltando...");
+                    break;
+
+                default:
+                    System.out.println("Opção inválida.");
+                    break;
             }
 
         } while (op != 0);
-	}
+    }
 
-	private static void cadastrarFilme(FilmController controller, Scanner sc) throws Exception {
+    private static void cadastrarFilme(FilmController controller, Scanner sc) throws Exception {
 
-		System.out.print("Título: ");
-	    String title = sc.nextLine();
+        System.out.print("Título: ");
+        String title = sc.nextLine();
 
-	    System.out.print("Descrição: ");
-	    String description = sc.nextLine();
+        System.out.print("Descrição: ");
+        String description = sc.nextLine();
 
-	    System.out.print("Data de lançamento (AAAAMMDD): ");
-	    int releaseDate = sc.nextInt();
-	    sc.nextLine();
+        System.out.print("Data de lançamento (AAAAMMDD): ");
+        int releaseDate = sc.nextInt();
+        sc.nextLine();
 
-	    System.out.print("Quantos diretores? ");
-	    int qtd = sc.nextInt();
-	    sc.nextLine();
+        System.out.print("Quantos diretores? ");
+        int qtd = sc.nextInt();
+        sc.nextLine();
 
-	    String[] directors = new String[qtd];
+        String[] directors = new String[qtd];
 
-	    for(int i = 0; i < qtd; i++) {
-	    	System.out.print("Diretor " + (i+1) + ": ");
-	    	directors[i] = sc.nextLine();
-	    }
+        for (int i = 0; i < qtd; i++) {
+            System.out.print("Diretor " + (i + 1) + ": ");
+            directors[i] = sc.nextLine();
+        }
 
-	    int id = controller.createFilm(title, description, releaseDate, directors);
+        int id = controller.createFilm(title, description, releaseDate, directors);
 
-	    System.out.println("Filme cadastrado com ID: " + id);
-	}
+        System.out.println("Filme cadastrado com ID: " + id);
+    }
 
-	private static void buscarFilme(FilmController controller, Scanner sc) throws Exception {
+    private static void buscarFilme(FilmController controller, Scanner sc) throws Exception {
 
-		System.out.print("ID do filme: ");
+        System.out.print("ID do filme: ");
         int id = sc.nextInt();
         sc.nextLine();
 
@@ -93,116 +104,110 @@ public class FilmeMenu {
         } else {
             mostrarFilme(f);
         }
-	}
+    }
 
-	private static void mostrarFilme(Film f) {
+    private static void mostrarFilme(Film f) {
 
-	    System.out.println("\n--- FILME ---");
+        System.out.println("\n--- FILME ---");
 
-	    System.out.println("ID: " + f.getID());
-	    System.out.println("Título: " + f.getTitle());
-	    System.out.println("Descrição: " + f.getDescription());
-	    int d = f.getReleaseDate();
+        System.out.println("ID: " + f.getID());
+        System.out.println("Título: " + f.getTitle());
+        System.out.println("Descrição: " + f.getDescription());
 
-	    int ano = d / 10000;
-	    int mes = (d / 100) % 100;
-	    int dia = d % 100;
+        int d = f.getReleaseDate();
+        int ano = d / 10000;
+        int mes = (d / 100) % 100;
+        int dia = d % 100;
 
-	    String dataFormatada = dia + "/" + mes + "/" + ano;
+        String dataFormatada = dia + "/" + mes + "/" + ano;
 
-	    System.out.println("Data de lançamento: " + dataFormatada);
+        System.out.println("Data de lançamento: " + dataFormatada);
+        System.out.println("Rating médio: " + f.getRating());
+        System.out.println("Total de avaliações: " + f.getTotalReviews());
 
-	    System.out.println("Rating médio: " + f.getRating());
-	    System.out.println("Total de avaliações: " + f.getTotalReviews());
+        System.out.print("Diretores: ");
 
-	    System.out.print("Diretores: ");
+        String[] directors = f.getDirectors();
 
-	    String[] directors = f.getDirectors();
+        if (directors != null && directors.length > 0) {
+            for (int i = 0; i < directors.length; i++) {
+                System.out.print(directors[i]);
+                if (i < directors.length - 1) {
+                    System.out.print(", ");
+                }
+            }
+        } else {
+            System.out.print("Nenhum diretor cadastrado");
+        }
 
-	    if (directors != null && directors.length > 0) {
+        System.out.println();
+    }
 
-	        for (int i = 0; i < directors.length; i++) {
+    private static void listarFilme(FilmController controller) throws Exception {
+        controller.listFilms();
+    }
 
-	            System.out.print(directors[i]);
+    private static void atualizarFilme(FilmController controller, Scanner sc) throws Exception {
 
-	            if (i < directors.length - 1) {
-	                System.out.print(", ");
-	            }
-	        }
+        System.out.print("ID do filme: ");
+        int id = sc.nextInt();
+        sc.nextLine();
 
-	    } else {
-	        System.out.print("Nenhum diretor cadastrado");
-	    }
+        Film f = controller.readFilm(id);
 
-	    System.out.println();
-	}
+        if (f == null) {
+            System.out.println("Filme não encontrado.");
+            return;
+        }
 
-	private static void listarFilme(FilmController controller) throws Exception {
-		controller.listFilms();
-	}
+        System.out.println("Título atual: " + f.getTitle());
+        System.out.print("Novo título (enter para manter): ");
+        String title = sc.nextLine();
+        if (!title.isEmpty()) f.setTitle(title);
 
-	private static void atualizarFilme(FilmController controller, Scanner sc) throws Exception {
+        System.out.println("Descrição atual: " + f.getDescription());
+        System.out.print("Nova descrição (enter para manter): ");
+        String desc = sc.nextLine();
+        if (!desc.isEmpty()) f.setDescription(desc);
 
-		System.out.print("ID do filme: ");
-	    int id = sc.nextInt();
-	    sc.nextLine();
+        System.out.println("Data atual: " + f.getReleaseDate());
+        System.out.print("Nova data (0 para manter): ");
+        int date = sc.nextInt();
+        sc.nextLine();
 
-	    Film f = controller.readFilm(id);
+        if (date != 0) {
+            f.setReleaseDate(date);
+        }
 
-	    if (f == null) {
-	        System.out.println("Filme não encontrado.");
-	        return;
-	    }
+        System.out.print("Alterar diretores? (s/n): ");
+        String resp = sc.nextLine();
 
-	    System.out.println("Título atual: " + f.getTitle());
-	    System.out.print("Novo título (enter para manter): ");
-	    String title = sc.nextLine();
-	    if(!title.isEmpty()) f.setTitle(title);
+        if (resp.equalsIgnoreCase("s")) {
+            System.out.print("Quantos diretores? ");
+            int qtd = sc.nextInt();
+            sc.nextLine();
 
-	    System.out.println("Descrição atual: " + f.getDescription());
-	    System.out.print("Nova descrição (enter para manter): ");
-	    String desc = sc.nextLine();
-	    if(!desc.isEmpty()) f.setDescription(desc);
+            String[] directors = new String[qtd];
 
-	    System.out.println("Data atual: " + f.getReleaseDate());
-	    System.out.print("Nova data (0 para manter): ");
-	    int date = sc.nextInt();
-	    sc.nextLine();
+            for (int i = 0; i < qtd; i++) {
+                System.out.print("Diretor " + (i + 1) + ": ");
+                directors[i] = sc.nextLine();
+            }
 
-	    if(date != 0) {
-	        f.setReleaseDate(date);
-	    }
+            f.setDirectors(directors);
+        }
 
-	    System.out.print("Alterar diretores? (s/n): ");
-	    String resp = sc.nextLine();
+        boolean ok = controller.updateFilm(f);
 
-	    if(resp.equalsIgnoreCase("s")) {
+        if (ok)
+            System.out.println("Filme atualizado!");
+        else
+            System.out.println("Erro ao atualizar.");
+    }
 
-	    	System.out.print("Quantos diretores? ");
-	    	int qtd = sc.nextInt();
-	    	sc.nextLine();
+    private static void excluirFilme(FilmController controller, Scanner sc) throws Exception {
 
-	    	String[] directors = new String[qtd];
-
-	    	for(int i = 0; i < qtd; i++) {
-	    		System.out.print("Diretor " + (i+1) + ": ");
-	    		directors[i] = sc.nextLine();
-	    	}
-
-	    	f.setDirectors(directors);
-	    }
-
-	    boolean ok = controller.updateFilm(f);
-
-	    if(ok)
-	    	System.out.println("Filme atualizado!");
-	    else
-	    	System.out.println("Erro ao atualizar.");
-	}
-
-	private static void excluirFilme(FilmController controller, Scanner sc) throws Exception {
-
-		System.out.print("ID do filme: ");
+        System.out.print("ID do filme: ");
         int id = sc.nextInt();
         sc.nextLine();
 
@@ -210,5 +215,9 @@ public class FilmeMenu {
             System.out.println("Filme excluído.");
         else
             System.out.println("Filme não encontrado.");
-	}
+    }
+
+    private static void exibirHash(FilmController controller) throws Exception {
+        controller.exibirIndice();
+    }
 }
