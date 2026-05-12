@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gerenciar Gêneros</title>
+
+<style>
+:root{
+--bg-body:#0f0f0f;
+--bg-container:#181818;
+--bg-input:#262626;
+--text-primary:#e4e4e4;
+--text-secondary:#9e9e9e;
+--accent:#bb86fc;
+--border-color:#2f2f2f;
+--danger:#cf6679;
+--success:#7ee787;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:radial-gradient(circle at top,#1a1a1a,#0f0f0f);
+color:var(--text-primary);
+display:flex;
+flex-direction: column;
+align-items: center;
+min-height: 100vh;
+}
+
+.top-nav {
+    width: 100%;
+    background: #121212;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+    height: 70px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.tabs-nav-main { display: flex; height: 100%; gap: 15px; }
+
+.tab-link {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    transition: 0.3s;
+}
+
+.tab-link:hover { color: white; }
+
+.tab-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0%;
+    height: 3px;
+    background: var(--accent);
+    transition: 0.3s;
+    transform: translateX(-50%);
+}
+
+.tab-link.active-link { color: var(--accent); }
+.tab-link.active-link::after { width: 100%; }
+
+.btn-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-color);
+    padding: 6px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    color: var(--text-primary);
+}
+
+.btn-profile:hover {
+    border-color: var(--accent);
+    background: rgba(187, 134, 252, 0.05);
+}
+
+.user-info { text-align: right; }
+.user-label { display: block; font-size: 10px; color: var(--text-secondary); font-weight: 800; text-transform: uppercase; }
+.user-name { display: block; font-size: 13px; font-weight: 600; }
+.avatar { width: 24px; height: 24px; background: var(--accent); border-radius: 4px; }
+
+.main-container{
+width:95%;
+max-width:900px;
+margin-top:30px;
+margin-bottom:30px;
+min-height:80vh;
+border-radius:14px;
+background:linear-gradient(145deg,#1e1e1e,#141414);
+box-shadow:
+0 15px 50px rgba(0,0,0,.7),
+inset 0 0 0 1px rgba(255,255,255,.03);
+display:flex;
+flex-direction:column;
+overflow:hidden;
+}
+
+.tab-nav{
+display:flex;
+background:#121212;
+border-bottom:1px solid var(--border-color);
+}
+
+.tab-button{
+flex:1;
+padding:18px;
+background:transparent;
+border:none;
+color:var(--text-secondary);
+cursor:pointer;
+text-transform:uppercase;
+font-size:12px;
+letter-spacing:1px;
+position:relative;
+transition:.3s;
+}
+
+.tab-button:hover{
+color:white;
+}
+
+.tab-button::after{
+content:"";
+position:absolute;
+bottom:0;
+left:50%;
+width:0%;
+height:3px;
+background:var(--accent);
+transition:.3s;
+transform:translateX(-50%);
+}
+
+.tab-button.active{
+color:var(--accent);
+}
+
+.tab-button.active::after{
+width:100%;
+}
+
+.tab-content-wrapper{
+flex:1;
+padding:40px;
+overflow-y:auto;
+}
+
+.tab-section{
+display:none;
+animation:fadeIn .3s ease;
+}
+
+.tab-section.active{
+display:block;
+}
+
+@keyframes fadeIn{
+from{opacity:0}
+to{opacity:1}
+}
+
+h2{
+margin-bottom:25px;
+color:var(--accent);
+padding-bottom:8px;
+position:relative;
+}
+
+h2::after{
+content:"";
+width:50px;
+height:2px;
+background:var(--accent);
+position:absolute;
+left:0;
+bottom:0;
+}
+
+.form-group{
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-size:13px;
+}
+
+input{
+width:100%;
+padding:12px;
+background:var(--bg-input);
+border:1px solid var(--border-color);
+border-radius:6px;
+color:var(--text-primary);
+}
+
+input:focus{
+outline:none;
+border:1px solid var(--accent);
+box-shadow:0 0 8px rgba(187,134,252,.4);
+}
+
+.search-box{
+display:flex;
+gap:15px;
+background:rgba(255,255,255,.03);
+padding:20px;
+border-radius:8px;
+margin-bottom:30px;
+border:1px solid var(--border-color);
+align-items:flex-end;
+}
+
+.btn-action{
+padding:12px 20px;
+border-radius:6px;
+border:none;
+cursor:pointer;
+font-weight:600;
+}
+
+.btn-save{
+background:linear-gradient(135deg,#bb86fc,#9a67ea);
+color:black;
+}
+
+.btn-update{
+margin-top:25px;
+}
+
+.btn-search{
+background:#333;
+color:white;
+}
+
+.btn-delete{
+background:transparent;
+border:1px solid var(--danger);
+color:var(--danger);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:14px;
+border-bottom:1px solid var(--border-color);
+text-align:left;
+}
+
+th{
+font-size:12px;
+color:var(--accent);
+text-transform:uppercase;
+}
+
+tbody tr:hover{
+background:rgba(255,255,255,.03);
+}
+
+.message{
+margin-top:18px;
+font-size:14px;
+font-weight:600;
+}
+
+.message.error{
+color:var(--danger);
+}
+
+.message.success{
+color:var(--success);
+}
+</style>
+</head>
+
+<body>
+
+<nav class="top-nav">
+    <div class="tabs-nav-main">
+        <a href="menuPrincipal.html" class="tab-link">Início</a>
+        <a href="usuario.html" class="tab-link">👥 Usuários</a>
+        <a href="filmes.html" class="tab-link">🎬 Filmes</a>
+        <a href="genero.html" class="tab-link active-link">🏷️ Gêneros</a>
+        <a href="avaliacao.html" class="tab-link">⭐ Avaliações</a>
+    </div>
+
+    <button class="btn-profile" type="button" id="btnProfile">
+        <div class="user-info">
+            <span class="user-label">Meu Perfil</span>
+            <span class="user-name" id="userNameLabel">Administrador</span>
+        </div>
+        <div class="avatar"></div>
+    </button>
+</nav>
+
+<div class="main-container">
+
+<nav class="tab-nav">
+<button class="tab-button active" onclick="openTab(event,'lista')">Listar</button>
+<button class="tab-button" onclick="openTab(event,'cadastrar')">Cadastrar</button>
+<button class="tab-button" onclick="openTab(event,'atualizar')">Atualizar</button>
+<button class="tab-button" onclick="openTab(event,'excluir')">Excluir</button>
+</nav>
+
+<div class="tab-content-wrapper">
+
+<section id="lista" class="tab-section active">
+<h2>Catálogo de Gêneros</h2>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Nome do Gênero</th>
+</tr>
+</thead>
+
+<tbody id="corpoTabela">
+<tr>
+<td colspan="2">Carregando gêneros...</td>
+</tr>
+</tbody>
+</table>
+
+<div id="listaMessage" class="message"></div>
+</section>
+
+<section id="cadastrar" class="tab-section">
+<h2>Cadastrar Novo Gênero</h2>
+
+<div class="form-group">
+<label for="nomeGenero">Nome do Gênero</label>
+<input type="text" id="nomeGenero" placeholder="Digite o gênero">
+</div>
+
+<button class="btn-action btn-save" id="btnSalvarGenero">
+Salvar Gênero
+</button>
+
+<div id="cadastroMessage" class="message"></div>
+</section>
+
+<section id="atualizar" class="tab-section">
+<h2>Atualizar Gênero</h2>
+
+<div class="search-box">
+<div style="flex:1">
+<label for="buscarIdGenero">ID do gênero</label>
+<input type="number" id="buscarIdGenero" placeholder="ID do gênero">
+</div>
+<button class="btn-action btn-search" id="btnBuscarGenero">
+Buscar
+</button>
+</div>
+
+<div class="form-group">
+<label for="novoNomeGenero">Novo Nome</label>
+<input type="text" id="novoNomeGenero">
+</div>
+
+<button class="btn-action btn-save btn-update" id="btnAtualizarGenero">
+Atualizar
+</button>
+
+<div id="atualizarMessage" class="message"></div>
+</section>
+
+<section id="excluir" class="tab-section">
+<h2>Excluir Gênero</h2>
+
+<div class="form-group">
+<label for="idExcluirGenero">ID do Gênero</label>
+<input type="number" id="idExcluirGenero">
+</div>
+
+<button class="btn-action btn-delete" id="btnExcluirGenero">
+Excluir
+</button>
+
+<div id="excluirMessage" class="message"></div>
+</section>
+
+</div>
+</div>
+
+<script>
+const API_GENEROS = "http://localhost:8080/generos";
+let usuarioLogado = null;
+
+try {
+    usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+} catch (e) {
+    usuarioLogado = null;
+}
+
+if (!usuarioLogado) {
+    window.location.href = "index.html";
+}
+
+if (usuarioLogado.administrator !== true) {
+    window.location.href = "menuUsuario.html";
+}
+
+document.getElementById("userNameLabel").textContent =
+    usuarioLogado.username || usuarioLogado.email || "Administrador";
+
+document.getElementById("btnProfile").addEventListener("click", function () {
+    window.location.href = "profile.html";
+});
+
+function openTab(evt,tabName){
+    let tabs = document.getElementsByClassName("tab-section");
+    let buttons = document.getElementsByClassName("tab-button");
+
+    for(let t of tabs) t.classList.remove("active");
+    for(let b of buttons) b.classList.remove("active");
+
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.classList.add("active");
+
+    if (tabName === "lista") {
+        carregarGeneros();
+    }
+}
+
+function showMessage(elementId, text, type = "error") {
+    const el = document.getElementById(elementId);
+    el.textContent = text;
+    el.className = `message ${type}`;
+}
+
+function limparMessage(elementId) {
+    const el = document.getElementById(elementId);
+    el.textContent = "";
+    el.className = "message";
+}
+
+async function carregarGeneros() {
+    limparMessage("listaMessage");
+    const tabela = document.getElementById("corpoTabela");
+    tabela.innerHTML = `<tr><td colspan="2">Carregando gêneros...</td></tr>`;
+
+    try {
+        const response = await fetch(API_GENEROS);
+        const data = await response.json();
+
+        if (!response.ok) {
+            tabela.innerHTML = `<tr><td colspan="2">Erro ao carregar gêneros.</td></tr>`;
+            showMessage("listaMessage", data?.message || "Erro ao carregar gêneros.");
+            return;
+        }
+
+        if (!Array.isArray(data) || data.length === 0) {
+            tabela.innerHTML = `<tr><td colspan="2">Nenhum gênero cadastrado.</td></tr>`;
+            return;
+        }
+
+        tabela.innerHTML = data.map(genero => `
+            <tr>
+                <td>${genero.id ?? genero.ID}</td>
+                <td>${genero.name ?? genero.nome}</td>
+            </tr>
+        `).join("");
+
+    } catch (error) {
+        tabela.innerHTML = `<tr><td colspan="2">Erro ao conectar com o servidor.</td></tr>`;
+        showMessage("listaMessage", "Erro ao conectar com o servidor.");
+    }
+}
+
+document.getElementById("btnSalvarGenero").addEventListener("click", async function () {
+    limparMessage("cadastroMessage");
+
+    const genero = {
+        name: document.getElementById("nomeGenero").value.trim()
+    };
+
+    if (!genero.name) {
+        showMessage("cadastroMessage", "Digite o nome do gênero.");
+        return;
+    }
+
+    try {
+        const response = await fetch(API_GENEROS, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(genero)
+        });
+
+        const data = await response.json();
+
+        const idCriado = data?.id ?? data?.ID;
+
+        if ((response.status === 201 || response.ok) && idCriado > 0) {
+            showMessage("cadastroMessage", "Gênero cadastrado com sucesso!", "success");
+            document.getElementById("nomeGenero").value = "";
+            carregarGeneros();
+        } else {
+            showMessage("cadastroMessage", data?.message || "Erro ao cadastrar gênero.");
+        }
+    } catch (error) {
+        showMessage("cadastroMessage", "Erro ao conectar com o servidor.");
+    }
+});
+
+document.getElementById("btnBuscarGenero").addEventListener("click", async function () {
+    limparMessage("atualizarMessage");
+
+    const id = document.getElementById("buscarIdGenero").value.trim();
+    if (!id) {
+        showMessage("atualizarMessage", "Informe o ID do gênero.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_GENEROS}/${id}`);
+        const data = await response.json();
+
+        if (response.ok && !data.message) {
+            document.getElementById("novoNomeGenero").value = data.name ?? data.nome;
+            showMessage("atualizarMessage", "Gênero carregado.", "success");
+        } else {
+            showMessage("atualizarMessage", data.message || "Gênero não encontrado.");
+        }
+    } catch (error) {
+        showMessage("atualizarMessage", "Erro ao conectar com o servidor.");
+    }
+});
+
+document.getElementById("btnAtualizarGenero").addEventListener("click", async function () {
+    limparMessage("atualizarMessage");
+
+    const id = document.getElementById("buscarIdGenero").value.trim();
+    const nome = document.getElementById("novoNomeGenero").value.trim();
+
+    if (!id || !nome) {
+        showMessage("atualizarMessage", "Informe o ID e o novo nome.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_GENEROS}/${id}`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                id: parseInt(id),
+                name: nome
+            })
+        });
+
+        const data = await response.json();
+
+        const idAtualizado = data?.id ?? data?.ID;
+
+        if (response.ok && idAtualizado > 0) {
+            showMessage("atualizarMessage", "Gênero atualizado com sucesso!", "success");
+            carregarGeneros();
+        } else {
+            showMessage("atualizarMessage", data?.message || "Erro ao atualizar gênero.");
+        }
+    } catch (error) {
+        showMessage("atualizarMessage", "Erro ao conectar com o servidor.");
+    }
+});
+
+document.getElementById("btnExcluirGenero").addEventListener("click", async function () {
+    limparMessage("excluirMessage");
+
+    const id = document.getElementById("idExcluirGenero").value.trim();
+
+    if (!id) {
+        showMessage("excluirMessage", "Informe o ID do gênero.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_GENEROS}/${id}`, {
+            method: "DELETE"
+        });
+
+        const data = await response.json();
+
+        if (response.ok && !data?.message?.toLowerCase?.().includes("não encontrado")) {
+            showMessage("excluirMessage", data?.message || "Gênero excluído com sucesso!", "success");
+            document.getElementById("idExcluirGenero").value = "";
+            carregarGeneros();
+        } else {
+            showMessage("excluirMessage", data?.message || "Erro ao excluir gênero.");
+        }
+    } catch (error) {
+        showMessage("excluirMessage", "Erro ao conectar com o servidor.");
+    }
+});
+
+window.addEventListener("load", carregarGeneros);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Minha Avaliação</title>
+
+<style>
+:root{
+--bg-body:#0f0f0f;
+--bg-container:#181818;
+--bg-input:#262626;
+--text-primary:#e4e4e4;
+--text-secondary:#9e9e9e;
+--accent:#bb86fc;
+--border-color:#2f2f2f;
+--danger:#cf6679;
+--success:#7ee787;
+}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+body{
+background:radial-gradient(circle at top,#1a1a1a,#0f0f0f);
+color:var(--text-primary);
+min-height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+.top-nav{
+width:100%;
+background:#121212;
+border-bottom:1px solid var(--border-color);
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 50px;
+height:70px;
+box-shadow:0 4px 20px rgba(0,0,0,0.5);
+}
+.tabs{
+display:flex;
+height:100%;
+gap:15px;
+}
+.tab-link{
+display:flex;
+align-items:center;
+padding:0 15px;
+text-decoration:none;
+color:var(--text-secondary);
+font-weight:600;
+font-size:12px;
+text-transform:uppercase;
+letter-spacing:1px;
+position:relative;
+transition:.3s;
+}
+.tab-link:hover{color:white;}
+.tab-link::after{
+content:"";
+position:absolute;
+bottom:0;
+left:50%;
+width:0%;
+height:3px;
+background:var(--accent);
+transition:.3s;
+transform:translateX(-50%);
+}
+.tab-link.active{color:var(--accent);}
+.tab-link.active::after{width:100%;}
+.btn-profile{
+display:flex;
+align-items:center;
+gap:12px;
+background:rgba(255,255,255,0.03);
+border:1px solid var(--border-color);
+padding:6px 16px;
+border-radius:8px;
+cursor:pointer;
+color:var(--text-primary);
+transition:.3s;
+}
+.btn-profile:hover{
+border-color:var(--accent);
+background:rgba(187,134,252,0.05);
+}
+.user-info{text-align:right;}
+.user-label{
+display:block;
+font-size:10px;
+color:var(--text-secondary);
+font-weight:800;
+text-transform:uppercase;
+}
+.user-name{
+display:block;
+font-size:13px;
+font-weight:600;
+}
+.avatar{
+width:24px;
+height:24px;
+background:var(--accent);
+border-radius:4px;
+}
+.main-container{
+width:95%;
+max-width:1100px;
+margin-top:30px;
+margin-bottom:30px;
+border-radius:14px;
+background:linear-gradient(145deg,#1e1e1e,#141414);
+box-shadow:0 15px 50px rgba(0,0,0,.7), inset 0 0 0 1px rgba(255,255,255,.03);
+padding:35px;
+}
+h2{
+margin-bottom:25px;
+color:var(--accent);
+padding-bottom:8px;
+position:relative;
+}
+h2::after{
+content:"";
+width:50px;
+height:2px;
+background:var(--accent);
+position:absolute;
+left:0;
+bottom:0;
+}
+.form-group{
+margin-bottom:20px;
+}
+label{
+display:block;
+margin-bottom:8px;
+font-size:13px;
+}
+input, textarea, select{
+width:100%;
+padding:12px;
+background:var(--bg-input);
+border:1px solid var(--border-color);
+border-radius:6px;
+color:var(--text-primary);
+}
+.search-row{
+display:grid;
+grid-template-columns:1fr 1fr auto;
+gap:15px;
+align-items:end;
+margin-bottom:25px;
+}
+.btn-action{
+padding:12px 20px;
+border-radius:6px;
+border:none;
+cursor:pointer;
+font-weight:600;
+background:linear-gradient(135deg,#bb86fc,#9a67ea);
+color:black;
+margin-right:10px;
+}
+.btn-secondary{
+background:#333;
+color:white;
+}
+.btn-danger{
+background:transparent;
+border:1px solid var(--danger);
+color:var(--danger);
+}
+.message{
+margin-top:18px;
+font-size:14px;
+font-weight:600;
+}
+.message.error{color:var(--danger);}
+.message.success{color:var(--success);}
+.preview-box{
+margin-top:20px;
+padding:15px;
+background:rgba(255,255,255,0.03);
+border:1px solid var(--border-color);
+border-radius:8px;
+}
+.actions-row{
+margin-top:20px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+</style>
+</head>
+
+<body>
+
+<nav class="top-nav">
+    <div class="tabs">
+        <a href="menuUsuario.html" class="tab-link">Início</a>
+        <a href="filmesUsuario.html" class="tab-link">🎬 Filmes</a>
+        <a href="avaliacaoUsuario.html" class="tab-link active">⭐ Minha Avaliação</a>
+        <a href="minhasAvaliacoes.html" class="tab-link">📝 Avaliações</a>
+    </div>
+
+    <button class="btn-profile" type="button" id="btnProfile">
+        <div class="user-info">
+            <span class="user-label">Meu Perfil</span>
+            <span class="user-name" id="userNameLabel">Usuário</span>
+        </div>
+        <div class="avatar"></div>
+    </button>
+</nav>
+
+<div class="main-container">
+    <h2>Minha Avaliação</h2>
+
+    <div class="search-row">
+        <div class="form-group">
+            <label for="buscarReviewId">Buscar pelo ID da avaliação</label>
+            <input type="number" id="buscarReviewId" min="1">
+        </div>
+
+        <div class="form-group">
+            <label for="buscarNomeFilme">Buscar pelo nome do filme</label>
+            <input type="text" id="buscarNomeFilme" placeholder="Digite o nome do filme">
+        </div>
+
+        <button class="btn-action btn-secondary" id="btnBuscarReview" type="button">Buscar</button>
+    </div>
+
+    <div class="form-group">
+        <label for="filmID">Filme</label>
+        <select id="filmID">
+            <option value="">Selecione um filme</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="rating">Nota (0 a 10)</label>
+        <input type="number" id="rating" min="0" max="10">
+    </div>
+
+    <div class="form-group">
+        <label for="note">Comentário</label>
+        <textarea id="note" rows="5"></textarea>
+    </div>
+
+    <div class="actions-row">
+        <button class="btn-action" id="btnSalvarReview" type="button">Salvar Avaliação</button>
+        <button class="btn-action" id="btnAtualizarReview" type="button">Atualizar Avaliação</button>
+        <button class="btn-action btn-danger" id="btnExcluirReview" type="button">Excluir Avaliação</button>
+    </div>
+
+    <div id="reviewEncontrada" class="preview-box" style="display:none;"></div>
+    <div id="reviewMessage" class="message"></div>
+</div>
+
+<script>
+const API_FILMES = "http://localhost:8080/filmes";
+const API_REVIEWS = "http://localhost:8080/reviews";
+let usuarioLogado = null;
+let reviewAtual = null;
+let listaFilmes = [];
+
+try {
+    usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+} catch (e) {
+    usuarioLogado = null;
+}
+
+if (!usuarioLogado) {
+    window.location.href = "index.html";
+}
+
+if (usuarioLogado.administrator === true) {
+    window.location.href = "menuPrincipal.html";
+}
+
+document.getElementById("userNameLabel").textContent =
+    usuarioLogado.username || usuarioLogado.email || "Usuário";
+
+document.getElementById("btnProfile").addEventListener("click", function () {
+    window.location.href = "profile.html";
+});
+
+function showMessage(text, type = "error") {
+    const el = document.getElementById("reviewMessage");
+    el.textContent = text;
+    el.className = `message ${type}`;
+}
+
+function limparFormulario() {
+    document.getElementById("filmID").value = "";
+    document.getElementById("rating").value = "";
+    document.getElementById("note").value = "";
+}
+
+function limparBusca() {
+    document.getElementById("buscarReviewId").value = "";
+    document.getElementById("buscarNomeFilme").value = "";
+}
+
+function esconderPreview() {
+    document.getElementById("reviewEncontrada").style.display = "none";
+    document.getElementById("reviewEncontrada").innerHTML = "";
+}
+
+function mostrarReview(review, filmeNome = "") {
+    const box = document.getElementById("reviewEncontrada");
+    box.style.display = "block";
+    box.innerHTML = `
+        <strong>ID:</strong> ${review.id ?? review.ID}<br>
+        <strong>Filme:</strong> ${filmeNome || review.filmID}<br>
+        <strong>Nota:</strong> ${review.rating}<br>
+        <strong>Comentário:</strong> ${review.note ?? "-"}
+    `;
+}
+
+function preencherFormulario(review) {
+    reviewAtual = review;
+    document.getElementById("filmID").value = String(review.filmID ?? "");
+    document.getElementById("rating").value = review.rating ?? "";
+    document.getElementById("note").value = review.note ?? "";
+}
+
+function buscarFilmePorNome(nome) {
+    const termo = nome.trim().toLowerCase();
+    return listaFilmes.find(f => {
+        const titulo = String(f.title ?? f.titulo ?? "").toLowerCase();
+        return titulo.includes(termo);
+    });
+}
+
+function nomeFilmePorId(id) {
+    const filme = listaFilmes.find(f => String(f.id ?? f.ID) === String(id));
+    return filme ? (filme.title ?? filme.titulo ?? `Filme ${id}`) : `Filme ${id}`;
+}
+
+async function carregarFilmes() {
+    try {
+        const response = await fetch(API_FILMES);
+        const data = await response.json();
+
+        const select = document.getElementById("filmID");
+        select.innerHTML = '<option value="">Selecione um filme</option>';
+
+        if (!response.ok || !Array.isArray(data)) {
+            showMessage(data?.message || "Não foi possível carregar os filmes.");
+            return;
+        }
+
+        listaFilmes = data;
+
+        data.forEach(filme => {
+            const id = filme.id ?? filme.ID;
+            const titulo = filme.title ?? filme.titulo ?? `Filme ${id}`;
+            select.innerHTML += `<option value="${id}">${titulo}</option>`;
+        });
+    } catch (e) {
+        showMessage("Erro ao conectar com o servidor.");
+    }
+}
+
+document.getElementById("btnBuscarReview").addEventListener("click", async function () {
+    const reviewId = parseInt(document.getElementById("buscarReviewId").value);
+    const nomeFilme = document.getElementById("buscarNomeFilme").value.trim();
+    const userID = usuarioLogado.id ?? usuarioLogado.ID;
+
+    reviewAtual = null;
+    esconderPreview();
+    showMessage("");
+
+    try {
+        if (!isNaN(reviewId) && reviewId > 0) {
+            const response = await fetch(`${API_REVIEWS}/${reviewId}`);
+            const data = await response.json();
+
+            if (!response.ok || data.message) {
+                showMessage(data?.message || "Avaliação não encontrada.");
+                return;
+            }
+
+            if (Number(data.userID) !== Number(userID)) {
+                showMessage("Essa avaliação não pertence a você.");
+                return;
+            }
+
+            preencherFormulario(data);
+            mostrarReview(data, nomeFilmePorId(data.filmID));
+            showMessage("Avaliação encontrada.", "success");
+            return;
+        }
+
+        if (nomeFilme) {
+            const filme = buscarFilmePorNome(nomeFilme);
+
+            if (!filme) {
+                showMessage("Filme não encontrado.");
+                return;
+            }
+
+            const filmID = filme.id ?? filme.ID;
+            const response = await fetch(`${API_REVIEWS}/usuario/${userID}/filme/${filmID}`);
+            const data = await response.json();
+
+            if (!response.ok || data.message) {
+                showMessage(data?.message || "Avaliação não encontrada para esse filme.");
+                return;
+            }
+
+            preencherFormulario(data);
+            mostrarReview(data, filme.title ?? filme.titulo);
+            showMessage("Avaliação encontrada.", "success");
+            return;
+        }
+
+        showMessage("Informe o ID da avaliação ou o nome do filme.");
+    } catch (e) {
+        showMessage("Erro ao conectar com o servidor.");
+    }
+});
+
+document.getElementById("btnSalvarReview").addEventListener("click", async function () {
+    const filmID = parseInt(document.getElementById("filmID").value);
+    const rating = parseInt(document.getElementById("rating").value);
+    const note = document.getElementById("note").value.trim();
+    const userID = usuarioLogado.id ?? usuarioLogado.ID;
+
+    if (!filmID) {
+        showMessage("Selecione um filme.");
+        return;
+    }
+
+    if (isNaN(rating) || rating < 0 || rating > 10) {
+        showMessage("Informe uma nota entre 0 e 10.");
+        return;
+    }
+
+    if (!note) {
+        showMessage("Digite um comentário.");
+        return;
+    }
+
+    try {
+        const response = await fetch(API_REVIEWS, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userID,
+                filmID,
+                rating,
+                note
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && !data.message) {
+            reviewAtual = data;
+            preencherFormulario(data);
+            mostrarReview(data, nomeFilmePorId(data.filmID));
+            showMessage("Avaliação cadastrada com sucesso!", "success");
+        } else {
+            showMessage(data.message || "Erro ao salvar avaliação.");
+        }
+    } catch (e) {
+        showMessage("Erro ao conectar com o servidor.");
+    }
+});
+
+document.getElementById("btnAtualizarReview").addEventListener("click", async function () {
+    const userID = usuarioLogado.id ?? usuarioLogado.ID;
+
+    if (!reviewAtual || !(reviewAtual.id ?? reviewAtual.ID)) {
+        showMessage("Busque uma avaliação sua antes de atualizar.");
+        return;
+    }
+
+    const reviewID = reviewAtual.id ?? reviewAtual.ID;
+    const filmID = parseInt(document.getElementById("filmID").value);
+    const rating = parseInt(document.getElementById("rating").value);
+    const note = document.getElementById("note").value.trim();
+
+    if (!filmID) {
+        showMessage("Selecione um filme.");
+        return;
+    }
+
+    if (isNaN(rating) || rating < 0 || rating > 10) {
+        showMessage("Informe uma nota entre 0 e 10.");
+        return;
+    }
+
+    if (!note) {
+        showMessage("Digite um comentário.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_REVIEWS}/${reviewID}/usuario/${userID}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                filmID,
+                rating,
+                note
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && !data.message) {
+            reviewAtual = data;
+            preencherFormulario(data);
+            mostrarReview(data, nomeFilmePorId(data.filmID));
+            showMessage("Avaliação atualizada com sucesso!", "success");
+        } else {
+            showMessage(data.message || "Erro ao atualizar avaliação.");
+        }
+    } catch (e) {
+        showMessage("Erro ao conectar com o servidor.");
+    }
+});
+
+document.getElementById("btnExcluirReview").addEventListener("click", async function () {
+    const userID = usuarioLogado.id ?? usuarioLogado.ID;
+
+    if (!reviewAtual || !(reviewAtual.id ?? reviewAtual.ID)) {
+        showMessage("Busque uma avaliação sua antes de excluir.");
+        return;
+    }
+
+    const reviewID = reviewAtual.id ?? reviewAtual.ID;
+
+    try {
+        const response = await fetch(`${API_REVIEWS}/${reviewID}/usuario/${userID}`, {
+            method: "DELETE"
+        });
+
+        const data = await response.json();
+
+        if (response.ok && !data.message) {
+            reviewAtual = null;
+            limparFormulario();
+            limparBusca();
+            esconderPreview();
+            showMessage("Avaliação excluída com sucesso!", "success");
+        } else {
+            showMessage(data.message || "Erro ao excluir avaliação.");
+        }
+    } catch (e) {
+        showMessage("Erro ao conectar com o servidor.");
+    }
+});
+
+window.addEventListener("load", carregarFilmes);
+</script>
+
+</body>
+</html>

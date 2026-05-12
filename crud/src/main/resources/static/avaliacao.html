@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerenciar Avaliações</title>
+
+<style>
+:root{
+--bg-body:#0f0f0f;
+--bg-container:#181818;
+--bg-input:#262626;
+--text-primary:#e4e4e4;
+--text-secondary:#9e9e9e;
+--accent:#bb86fc;
+--border-color:#2f2f2f;
+--danger:#cf6679;
+--success:#7ee787;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:radial-gradient(circle at top,#1a1a1a,#0f0f0f);
+color:var(--text-primary);
+display:flex;
+justify-content:center;
+padding:30px;
+height:100vh;
+}
+
+.top-nav {
+    width: 100%;
+    background: #121212;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+    height: 70px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.tabs { display: flex; height: 100%; gap: 15px; }
+
+.tab-link {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    transition: 0.3s;
+}
+
+.tab-link:hover { color: white; }
+
+.tab-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0%;
+    height: 3px;
+    background: var(--accent);
+    transition: 0.3s;
+    transform: translateX(-50%);
+}
+
+.tab-link.active { color: var(--accent); }
+.tab-link.active::after { width: 100%; }
+
+.btn-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-color);
+    padding: 6px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.btn-profile:hover {
+    border-color: var(--accent);
+    background: rgba(187, 134, 252, 0.05);
+}
+
+.user-info { text-align: right; }
+.user-label { display: block; font-size: 10px; color: var(--text-secondary); font-weight: 800; text-transform: uppercase; }
+.user-name { display: block; font-size: 13px; font-weight: 600; }
+.avatar { width: 24px; height: 24px; background: var(--accent); border-radius: 4px; }
+
+.main-container{
+width:95%;
+max-width:1000px;
+height:90vh;
+border-radius:14px;
+background:linear-gradient(145deg,#1e1e1e,#141414);
+box-shadow:
+0 15px 50px rgba(0,0,0,.7),
+inset 0 0 0 1px rgba(255,255,255,.03);
+display:flex;
+flex-direction:column;
+overflow:hidden;
+margin-top:70px;
+}
+
+.tab-nav{
+display:flex;
+background:#121212;
+border-bottom:1px solid var(--border-color);
+}
+
+.tab-button{
+flex:1;
+padding:18px;
+background:transparent;
+border:none;
+color:var(--text-secondary);
+cursor:pointer;
+text-transform:uppercase;
+font-size:12px;
+letter-spacing:1px;
+position:relative;
+transition:.3s;
+}
+
+.tab-button:hover{
+color:white;
+}
+
+.tab-button::after{
+content:"";
+position:absolute;
+bottom:0;
+left:50%;
+width:0%;
+height:3px;
+background:var(--accent);
+transition:.3s;
+transform:translateX(-50%);
+}
+
+.tab-button:hover::after{
+width:60%;
+}
+
+.tab-button.active{
+color:var(--accent);
+}
+
+.tab-button.active::after{
+width:100%;
+}
+
+.tab-content-wrapper{
+flex:1;
+padding:40px;
+overflow-y:auto;
+}
+
+.tab-section{
+display:none;
+animation:fadeIn .3s ease;
+}
+
+.tab-section.active{
+display:block;
+}
+
+@keyframes fadeIn{
+from{opacity:0}
+to{opacity:1}
+}
+
+h2{
+margin-bottom:25px;
+color:var(--accent);
+padding-bottom:8px;
+position:relative;
+}
+
+h2::after{
+content:"";
+width:50px;
+height:2px;
+background:var(--accent);
+position:absolute;
+left:0;
+bottom:0;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+.full-width{
+grid-column:span 2;
+}
+
+.form-group{
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-size:13px;
+}
+
+input,textarea{
+width:100%;
+padding:12px;
+background:var(--bg-input);
+border:1px solid var(--border-color);
+border-radius:6px;
+color:var(--text-primary);
+}
+
+input:focus,
+textarea:focus{
+outline:none;
+border:1px solid var(--accent);
+box-shadow:0 0 8px rgba(187,134,252,.4);
+}
+
+.search-box{
+display:flex;
+gap:15px;
+background:rgba(255,255,255,.03);
+padding:20px;
+border-radius:8px;
+margin-bottom:30px;
+border:1px solid var(--border-color);
+align-items:flex-end;
+}
+
+.btn-action{
+padding:12px 20px;
+border-radius:6px;
+border:none;
+cursor:pointer;
+font-weight:600;
+}
+
+.btn-save{
+background:linear-gradient(135deg,#bb86fc,#9a67ea);
+color:black;
+}
+
+.btn-update{
+margin-top:25px;
+}
+
+.btn-search{
+background:#333;
+color:white;
+}
+
+.btn-delete{
+background:transparent;
+border:1px solid var(--danger);
+color:var(--danger);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:14px;
+border-bottom:1px solid var(--border-color);
+}
+
+th{
+font-size:12px;
+color:var(--accent);
+text-transform:uppercase;
+}
+
+tbody tr:hover{
+background:rgba(255,255,255,.03);
+}
+
+.message{
+margin-top:18px;
+font-size:14px;
+font-weight:600;
+}
+
+.message.error{
+color:var(--danger);
+}
+
+.message.success{
+color:var(--success);
+}
+</style>
+</head>
+
+<body>
+
+<nav class="top-nav">
+    <div class="tabs">
+        <a href="menuPrincipal.html" class="tab-link">Início</a>
+        <a href="usuario.html" class="tab-link">👥 Usuários</a>
+        <a href="filmes.html" class="tab-link">🎬 Filmes</a>
+        <a href="genero.html" class="tab-link">🏷️ Gêneros</a>
+        <a href="avaliacao.html" class="tab-link active">⭐ Avaliações</a>
+    </div>
+
+    <a href="profile.html" class="btn-profile" style="text-decoration: none;">
+        <div class="user-info">
+            <span class="user-label">Meu Perfil</span>
+            <span class="user-name" id="userNameLabel"></span>
+        </div>
+        <div class="avatar"></div>
+    </a>
+</nav>
+
+<div class="main-container">
+
+<nav class="tab-nav">
+<button class="tab-button active" onclick="openTab(event,'lista')">Avaliações</button>
+<button class="tab-button" onclick="openTab(event,'cadastrar')">Fazer Avaliação</button>
+<button class="tab-button" onclick="openTab(event,'atualizar')">Atualizar</button>
+<button class="tab-button" onclick="openTab(event,'excluir')">Excluir</button>
+</nav>
+
+<div class="tab-content-wrapper">
+
+<section id="lista" class="tab-section active">
+<h2>Todas as Avaliações</h2>
+
+<div class="search-box">
+<div style="flex:1">
+<label for="buscarFilmIdLista">Filtrar por ID do Filme</label>
+<input type="number" id="buscarFilmIdLista" min="1" placeholder="Digite o ID do filme">
+</div>
+
+<div style="flex:1">
+<label for="buscarUserIdLista">Filtrar por ID do Usuário</label>
+<input type="number" id="buscarUserIdLista" min="1" placeholder="Digite o ID do usuário">
+</div>
+
+<button class="btn-action btn-search" id="btnFiltrarAvaliacoes">Buscar</button>
+<button class="btn-action btn-search" id="btnListarTodasAvaliacoes">Listar Todas</button>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Filme(ID)</th>
+<th>Usuário(ID)</th>
+<th>Usuário</th>
+<th>Nota</th>
+<th>Comentário</th>
+</tr>
+</thead>
+
+<tbody id="tabelaAvaliacoes">
+<tr><td colspan="6">Carregando...</td></tr>
+</tbody>
+</table>
+
+<div id="listaMessage" class="message"></div>
+</section>
+
+<section id="cadastrar" class="tab-section">
+<h2>Nova Avaliação</h2>
+
+<div class="form-grid">
+<div class="form-group">
+<label for="userID">ID do Usuário</label>
+<input type="number" id="userID">
+</div>
+
+<div class="form-group">
+<label for="filmID">ID do Filme</label>
+<input type="number" id="filmID">
+</div>
+
+<div class="form-group full-width">
+<label for="rating">Nota</label>
+<input type="number" id="rating" min="0" max="10">
+</div>
+
+<div class="form-group full-width">
+<label for="note">Comentário</label>
+<textarea id="note" rows="4"></textarea>
+</div>
+</div>
+
+<button class="btn-action btn-save" id="btnCriarReview">
+Enviar Avaliação
+</button>
+
+<div id="cadastroMessage" class="message"></div>
+</section>
+
+<section id="atualizar" class="tab-section">
+<h2>Editar Avaliação</h2>
+
+<div class="search-box">
+<div style="flex:1">
+<label for="buscarIdAtualizar">ID da Avaliação</label>
+<input type="number" id="buscarIdAtualizar">
+</div>
+
+<button class="btn-action btn-search" id="btnBuscarAtualizar">
+Buscar
+</button>
+</div>
+
+<div class="form-grid">
+<div class="form-group">
+<label for="userIDAtualizar">ID do Usuário</label>
+<input type="number" id="userIDAtualizar">
+</div>
+
+<div class="form-group">
+<label for="filmIDAtualizar">ID do Filme</label>
+<input type="number" id="filmIDAtualizar">
+</div>
+
+<div class="form-group full-width">
+<label for="ratingAtualizar">Nova Nota</label>
+<input type="number" id="ratingAtualizar" min="0" max="10">
+</div>
+
+<div class="form-group full-width">
+<label for="noteAtualizar">Novo Comentário</label>
+<textarea id="noteAtualizar" rows="4"></textarea>
+</div>
+</div>
+
+<button class="btn-action btn-save btn-update" id="btnAtualizarReview">
+Atualizar
+</button>
+
+<div id="atualizarMessage" class="message"></div>
+</section>
+
+<section id="excluir" class="tab-section">
+<h2>Excluir Avaliação</h2>
+
+<div class="search-box">
+<div style="flex:1">
+<label for="buscarIdExcluir">ID da Avaliação</label>
+<input type="number" id="buscarIdExcluir">
+</div>
+
+<button class="btn-action btn-search" id="btnBuscarExcluir">
+Buscar
+</button>
+</div>
+
+<div id="reviewExcluirPreview" style="margin-bottom:20px;color:#ccc;"></div>
+
+<button class="btn-action btn-delete" id="btnExcluirReview">
+Excluir
+</button>
+
+<div id="excluirMessage" class="message"></div>
+</section>
+
+</div>
+</div>
+
+<script>
+const API_REVIEWS = "http://localhost:8080/reviews";
+
+function openTab(evt,tabName){
+    let tabs = document.getElementsByClassName("tab-section");
+    let buttons = document.getElementsByClassName("tab-button");
+
+    for(let t of tabs) t.classList.remove("active");
+    for(let b of buttons) b.classList.remove("active");
+
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.classList.add("active");
+
+    if (tabName === "lista") {
+        carregarReviews();
+    }
+}
+
+function showMessage(elementId, text, type = "error") {
+    const el = document.getElementById(elementId);
+    el.textContent = text;
+    el.className = `message ${type}`;
+}
+
+function limparMessage(elementId) {
+    const el = document.getElementById(elementId);
+    el.textContent = "";
+    el.className = "message";
+}
+
+function renderizarTabelaReviews(data) {
+    const tabela = document.getElementById("tabelaAvaliacoes");
+
+    if (!Array.isArray(data) || data.length === 0) {
+        tabela.innerHTML = `<tr><td colspan="6">Nenhuma avaliação cadastrada.</td></tr>`;
+        return;
+    }
+
+    tabela.innerHTML = data.map(review => `
+        <tr>
+            <td>${review.id ?? review.ID ?? "-"}</td>
+            <td>${review.filmID ?? "-"}</td>
+            <td>${review.userID ?? "-"}</td>
+            <td>${review.username ?? "-"}</td>
+            <td>${review.rating ?? "-"}</td>
+            <td>${review.note || "-"}</td>
+        </tr>
+    `).join("");
+}
+
+async function carregarReviews() {
+    limparMessage("listaMessage");
+    const tabela = document.getElementById("tabelaAvaliacoes");
+    tabela.innerHTML = `<tr><td colspan="6">Carregando...</td></tr>`;
+
+    try {
+        const response = await fetch(API_REVIEWS);
+
+        let data = null;
+        try {
+            data = await response.json();
+        } catch (_) {
+            data = null;
+        }
+
+        if (!response.ok) {
+            tabela.innerHTML = `<tr><td colspan="6">Erro ao carregar reviews.</td></tr>`;
+            showMessage("listaMessage", data?.message || "Erro ao carregar reviews.");
+            return;
+        }
+
+        renderizarTabelaReviews(data);
+
+    } catch (error) {
+        tabela.innerHTML = `<tr><td colspan="6">Erro ao conectar com o servidor.</td></tr>`;
+        showMessage("listaMessage", "Erro ao conectar com o servidor.");
+    }
+}
+
+async function filtrarAvaliacoes() {
+    limparMessage("listaMessage");
+    const tabela = document.getElementById("tabelaAvaliacoes");
+    tabela.innerHTML = `<tr><td colspan="6">Carregando...</td></tr>`;
+
+    const filmId = document.getElementById("buscarFilmIdLista").value.trim();
+    const userId = document.getElementById("buscarUserIdLista").value.trim();
+
+    if (filmId && userId) {
+        tabela.innerHTML = `<tr><td colspan="6">Escolha apenas um filtro por vez.</td></tr>`;
+        showMessage("listaMessage", "Informe somente o ID do filme ou somente o ID do usuário.");
+        return;
+    }
+
+    if (!filmId && !userId) {
+        carregarReviews();
+        return;
+    }
+
+    let url = API_REVIEWS;
+
+    if (filmId) {
+        url = `${API_REVIEWS}/filme/${filmId}`;
+    } else if (userId) {
+        url = `${API_REVIEWS}/usuario/${userId}`;
+    }
+
+    try {
+        const response = await fetch(url);
+
+        let data = null;
+        try {
+            data = await response.json();
+        } catch (_) {
+            data = null;
+        }
+
+        if (!response.ok) {
+            tabela.innerHTML = `<tr><td colspan="6">Erro ao filtrar avaliações.</td></tr>`;
+            showMessage("listaMessage", data?.message || "Erro ao filtrar avaliações.");
+            return;
+        }
+
+        renderizarTabelaReviews(data);
+
+        if (filmId) {
+            showMessage("listaMessage", `Filtro aplicado para o filme ID ${filmId}.`, "success");
+        } else if (userId) {
+            showMessage("listaMessage", `Filtro aplicado para o usuário ID ${userId}.`, "success");
+        }
+
+    } catch (error) {
+        tabela.innerHTML = `<tr><td colspan="6">Erro ao conectar com o servidor.</td></tr>`;
+        showMessage("listaMessage", "Erro ao conectar com o servidor.");
+    }
+}
+
+document.getElementById("btnFiltrarAvaliacoes").addEventListener("click", filtrarAvaliacoes);
+
+document.getElementById("btnListarTodasAvaliacoes").addEventListener("click", function () {
+    document.getElementById("buscarFilmIdLista").value = "";
+    document.getElementById("buscarUserIdLista").value = "";
+    carregarReviews();
+});
+
+document.getElementById("btnCriarReview").addEventListener("click", async function () {
+    limparMessage("cadastroMessage");
+
+    const review = {
+        userID: parseInt(document.getElementById("userID").value),
+        filmID: parseInt(document.getElementById("filmID").value),
+        rating: parseInt(document.getElementById("rating").value),
+        note: document.getElementById("note").value.trim()
+    };
+
+    if (!review.userID || !review.filmID || isNaN(review.rating) || !review.note) {
+        showMessage("cadastroMessage", "Preencha todos os campos.");
+        return;
+    }
+
+    try {
+        const response = await fetch(API_REVIEWS, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(review)
+        });
+
+        let data = null;
+        try {
+            data = await response.json();
+        } catch (_) {
+            data = null;
+        }
+
+        if (response.ok && !data?.message) {
+            showMessage("cadastroMessage", "Avaliação cadastrada com sucesso!", "success");
+            document.getElementById("userID").value = "";
+            document.getElementById("filmID").value = "";
+            document.getElementById("rating").value = "";
+            document.getElementById("note").value = "";
+            carregarReviews();
+        } else {
+            showMessage("cadastroMessage", data?.message || "Erro ao cadastrar avaliação.");
+        }
+    } catch (error) {
+        showMessage("cadastroMessage", "Erro ao conectar com o servidor.");
+    }
+});
+
+document.getElementById("btnBuscarAtualizar").addEventListener("click", async function () {
+    limparMessage("atualizarMessage");
+
+    const id = document.getElementById("buscarIdAtualizar").value.trim();
+    if (!id) {
+        showMessage("atualizarMessage", "Informe o ID da avaliação.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_REVIEWS}/${id}`);
+
+        let data = null;
+        try {
+            data = await response.json();
+        } catch (_) {
+            data = null;
+        }
+
+        if (response.ok && !data?.message) {
+            document.getElementById("userIDAtualizar").value = data.userID ?? "";
+            document.getElementById("filmIDAtualizar").value = data.filmID ?? "";
+            document.getElementById("ratingAtualizar").value = data.rating ?? "";
+            document.getElementById("noteAtualizar").value = data.note ?? "";
+            showMessage("atualizarMessage", "Avaliação carregada.", "success");
+        } else {
+            showMessage("atualizarMessage", data?.message || "Avaliação não encontrada.");
+        }
+    } catch (error) {
+        showMessage("atualizarMessage", "Erro ao conectar com o servidor.");
+    }
+});
+
+document.getElementById("btnAtualizarReview").addEventListener("click", async function () {
+    limparMessage("atualizarMessage");
+
+    const id = document.getElementById("buscarIdAtualizar").value.trim();
+
+    const review = {
+        id: parseInt(id),
+        userID: parseInt(document.getElementById("userIDAtualizar").value),
+        filmID: parseInt(document.getElementById("filmIDAtualizar").value),
+        rating: parseInt(document.getElementById("ratingAtualizar").value),
+        note: document.getElementById("noteAtualizar").value.trim()
+    };
+
+    if (!id || !review.userID || !review.filmID || isNaN(review.rating) || !review.note) {
+        showMessage("atualizarMessage", "Preencha todos os campos.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_REVIEWS}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(review)
+        });
+
+        let data = null;
+        try {
+            data = await response.json();
+        } catch (_) {
+            data = null;
+        }
+
+        if (response.ok && !data?.message) {
+            showMessage("atualizarMessage", "Avaliação atualizada com sucesso!", "success");
+            carregarReviews();
+        } else {
+            showMessage("atualizarMessage", data?.message || "Erro ao atualizar.");
+        }
+    } catch (error) {
+        showMessage("atualizarMessage", "Erro ao conectar com o servidor.");
+    }
+});
+
+document.getElementById("btnBuscarExcluir").addEventListener("click", async function () {
+    limparMessage("excluirMessage");
+    document.getElementById("reviewExcluirPreview").innerHTML = "";
+
+    const id = document.getElementById("buscarIdExcluir").value.trim();
+    if (!id) {
+        showMessage("excluirMessage", "Informe o ID da avaliação.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_REVIEWS}/${id}`);
+
+        let data = null;
+        try {
+            data = await response.json();
+        } catch (_) {
+            data = null;
+        }
+
+        if (response.ok && !data?.message) {
+            document.getElementById("reviewExcluirPreview").innerHTML = `
+                <strong>ID:</strong> ${data.id ?? data.ID}<br>
+                <strong>Usuário:</strong> ${data.userID}<br>
+                <strong>Username:</strong> ${data.username ?? "-"}<br>
+                <strong>Filme:</strong> ${data.filmID}<br>
+                <strong>Nota:</strong> ${data.rating}<br>
+                <strong>Comentário:</strong> ${data.note ?? "-"}
+            `;
+            showMessage("excluirMessage", "Avaliação encontrada.", "success");
+        } else {
+            showMessage("excluirMessage", data?.message || "Avaliação não encontrada.");
+        }
+    } catch (error) {
+        showMessage("excluirMessage", "Erro ao conectar com o servidor.");
+    }
+});
+
+document.getElementById("btnExcluirReview").addEventListener("click", async function () {
+    limparMessage("excluirMessage");
+
+    const id = document.getElementById("buscarIdExcluir").value.trim();
+    if (!id) {
+        showMessage("excluirMessage", "Informe o ID da avaliação.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_REVIEWS}/${id}`, {
+            method: "DELETE"
+        });
+
+        let data = null;
+        try {
+            data = await response.json();
+        } catch (_) {
+            data = null;
+        }
+
+        if (response.ok && !data?.message) {
+            showMessage("excluirMessage", "Avaliação excluída com sucesso!", "success");
+            document.getElementById("reviewExcluirPreview").innerHTML = "";
+            document.getElementById("buscarIdExcluir").value = "";
+            carregarReviews();
+        } else {
+            showMessage("excluirMessage", data?.message || "Erro ao excluir.");
+        }
+    } catch (error) {
+        showMessage("excluirMessage", "Erro ao conectar com o servidor.");
+    }
+});
+
+let usuario = null;
+try {
+    usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+} catch (_) {
+    usuario = null;
+}
+
+if (!usuario) {
+    window.location.href = "index.html";
+}
+
+if (usuario.administrator !== true) {
+    window.location.href = "menuUsuario.html";
+}
+
+const userNameLabel = document.getElementById("userNameLabel");
+
+if (userNameLabel) {
+    userNameLabel.textContent = usuario?.username || usuario?.email || "Usuário";
+}
+
+window.addEventListener("load", carregarReviews);
+</script>
+
+</body>
+</html>

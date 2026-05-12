@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Meu Perfil</title>
+
+<style>
+:root{
+--bg-body:#0f0f0f;
+--bg-container:#181818;
+--bg-input:#262626;
+--text-primary:#e4e4e4;
+--text-secondary:#9e9e9e;
+--accent:#bb86fc;
+--border-color:#2f2f2f;
+--danger:#cf6679;
+--success:#7ee787;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:radial-gradient(circle at top,#1a1a1a,#0f0f0f);
+color:var(--text-primary);
+display:flex;
+flex-direction:column;
+align-items:center;
+min-height:100vh;
+}
+
+.top-nav{
+width:100%;
+background:#121212;
+border-bottom:1px solid var(--border-color);
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 50px;
+height:70px;
+box-shadow:0 4px 20px rgba(0,0,0,0.5);
+}
+
+.tabs-nav-main{
+display:flex;
+gap:15px;
+}
+
+.tab-link{
+display:flex;
+align-items:center;
+padding:0 15px;
+text-decoration:none;
+color:var(--text-secondary);
+font-weight:600;
+font-size:12px;
+text-transform:uppercase;
+letter-spacing:1px;
+position:relative;
+transition:.3s;
+}
+
+.tab-link:hover{
+color:white;
+}
+
+.tab-link.active-link{
+color:var(--accent);
+}
+
+.btn-profile{
+display:flex;
+align-items:center;
+gap:12px;
+background:rgba(255,255,255,0.03);
+border:1px solid var(--border-color);
+padding:6px 16px;
+border-radius:8px;
+color:var(--text-primary);
+}
+
+.user-info{
+text-align:right;
+}
+
+.user-label{
+font-size:10px;
+color:var(--text-secondary);
+}
+
+.user-name{
+font-size:13px;
+font-weight:bold;
+}
+
+.avatar{
+width:24px;
+height:24px;
+background:var(--accent);
+border-radius:4px;
+}
+
+.main-container{
+width:95%;
+max-width:850px;
+margin-top:30px;
+border-radius:14px;
+background:linear-gradient(145deg,#1e1e1e,#141414);
+padding:40px;
+}
+
+h2{
+margin-bottom:20px;
+color:var(--accent);
+}
+
+.form-group{
+margin-bottom:15px;
+}
+
+label{
+display:block;
+margin-bottom:6px;
+}
+
+input{
+width:100%;
+padding:10px;
+background:var(--bg-input);
+border:1px solid var(--border-color);
+border-radius:6px;
+color:white;
+}
+
+.password-wrapper{
+position:relative;
+width:100%;
+}
+
+.password-wrapper input{
+padding-right:55px;
+}
+
+.toggle-password{
+position:absolute;
+right:12px;
+top:50%;
+transform:translateY(-50%);
+background:none;
+border:none;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:0;
+}
+
+.toggle-password img{
+width:24px;
+height:24px;
+object-fit:contain;
+opacity:.85;
+transition:.2s;
+}
+
+.toggle-password img:hover{
+opacity:1;
+transform:scale(1.08);
+}
+
+.actions{
+margin-top:20px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+button{
+padding:10px 15px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.btn-save{
+background:var(--accent);
+color:black;
+}
+
+.btn-delete{
+background:transparent;
+border:1px solid var(--danger);
+color:var(--danger);
+}
+
+.btn-logout{
+background:#333;
+color:white;
+}
+
+.message{
+margin-top:10px;
+}
+
+.message.error{
+color:var(--danger);
+}
+
+.message.success{
+color:var(--success);
+}
+</style>
+</head>
+
+<body>
+
+<nav class="top-nav">
+    <div class="tabs-nav-main" id="menuPrincipal"></div>
+
+    <div class="btn-profile">
+        <div class="user-info">
+            <span class="user-label">Meu Perfil</span>
+            <span class="user-name" id="userNameLabel"></span>
+        </div>
+        <div class="avatar"></div>
+    </div>
+</nav>
+
+<div class="main-container">
+    <h2>Meu Perfil</h2>
+
+    <div class="form-group">
+        <label>ID</label>
+        <input type="text" id="perfilId" readonly>
+    </div>
+
+    <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="perfilUsername" readonly>
+    </div>
+
+    <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="perfilEmail">
+    </div>
+
+    <div class="form-group">
+        <label>Senha</label>
+
+        <div class="password-wrapper">
+            <input type="password" id="perfilSenha">
+
+            <button
+                type="button"
+                class="toggle-password"
+                id="toggleSenha"
+            >
+                <img
+                    id="iconeSenha"
+                    src="olho-fechado.png"
+                    alt="Mostrar senha"
+                >
+            </button>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn-save" id="btnSalvarPerfil">Salvar</button>
+        <button class="btn-delete" id="btnExcluirConta">Excluir Conta</button>
+        <button class="btn-logout" id="btnLogout">Logout</button>
+    </div>
+
+    <div id="perfilMessage" class="message"></div>
+</div>
+
+<script>
+const API = "http://localhost:8080/usuarios";
+let usuarioLogado = null;
+
+try {
+    usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+} catch (e) {
+    usuarioLogado = null;
+}
+
+if (!usuarioLogado) {
+    window.location.href = "index.html";
+}
+
+const userId = usuarioLogado.id ?? usuarioLogado.ID;
+let isAdmin = usuarioLogado.administrator ?? false;
+
+function mostrarMensagem(texto, tipo = "error") {
+    const msg = document.getElementById("perfilMessage");
+    msg.textContent = texto;
+    msg.className = `message ${tipo}`;
+}
+
+async function lerResposta(res) {
+    try {
+        return await res.json();
+    } catch (e) {
+        return null;
+    }
+}
+
+function montarMenu() {
+    const menu = document.getElementById("menuPrincipal");
+
+    if (isAdmin) {
+        menu.innerHTML = `
+            <a href="menuPrincipal.html" class="tab-link">Início</a>
+            <a href="usuario.html" class="tab-link">👥 Usuários</a>
+            <a href="filmes.html" class="tab-link">🎬 Filmes</a>
+            <a href="genero.html" class="tab-link">🏷️ Gêneros</a>
+            <a href="avaliacao.html" class="tab-link">⭐ Avaliações</a>
+            <a href="profile.html" class="tab-link active-link">Perfil</a>
+        `;
+    } else {
+        menu.innerHTML = `
+            <a href="menuUsuario.html" class="tab-link">Início</a>
+            <a href="filmesUsuario.html" class="tab-link">🎬 Filmes</a>
+            <a href="avaliacaoUsuario.html" class="tab-link">⭐ Minha Avaliação</a>
+            <a href="minhasAvaliacoes.html" class="tab-link">📝 Avaliações</a>
+            <a href="profile.html" class="tab-link active-link">Perfil</a>
+        `;
+    }
+}
+
+async function carregarPerfilServidor() {
+    try {
+
+        const res = await fetch(`${API}/perfil/${userId}`);
+        const data = await lerResposta(res);
+
+        if (res.ok && data && !data.message) {
+
+            const usuarioAtualizado = {
+                ...usuarioLogado,
+                id: data.id ?? userId,
+                username: data.username ?? usuarioLogado.username ?? "",
+                email: data.email ?? usuarioLogado.email ?? "",
+                administrator: data.administrator ?? usuarioLogado.administrator ?? false
+            };
+
+            localStorage.setItem(
+                "usuarioLogado",
+                JSON.stringify(usuarioAtualizado)
+            );
+
+            usuarioLogado = usuarioAtualizado;
+            isAdmin = usuarioLogado.administrator ?? false;
+
+            montarMenu();
+            carregarPerfil();
+
+        } else {
+            carregarPerfil();
+        }
+
+    } catch (e) {
+        carregarPerfil();
+    }
+}
+
+function carregarPerfil() {
+
+    document.getElementById("perfilId").value = userId;
+
+    document.getElementById("perfilUsername").value =
+        usuarioLogado.username || "";
+
+    document.getElementById("perfilEmail").value =
+        usuarioLogado.email || "";
+
+    document.getElementById("perfilSenha").value = "";
+
+    document.getElementById("userNameLabel").textContent =
+        usuarioLogado.username ||
+        usuarioLogado.email ||
+        "Usuário";
+}
+
+document.getElementById("btnSalvarPerfil")
+.addEventListener("click", async () => {
+
+    const email =
+        document.getElementById("perfilEmail")
+        .value.trim();
+
+    const senha =
+        document.getElementById("perfilSenha")
+        .value.trim();
+
+    if (!email || !senha) {
+        mostrarMensagem("Preencha email e senha.");
+        return;
+    }
+
+    try {
+
+        const res = await fetch(`${API}/perfil/${userId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({
+                email,
+                password: senha
+            })
+        });
+
+        const data = await lerResposta(res);
+
+        if (res.ok && data && !data.message) {
+
+            mostrarMensagem(
+                "Atualizado!",
+                "success"
+            );
+
+            const usuarioAtualizado = {
+                ...usuarioLogado,
+                email: data.email ?? email,
+                username: data.username ?? usuarioLogado.username,
+                administrator: data.administrator ?? usuarioLogado.administrator
+            };
+
+            localStorage.setItem(
+                "usuarioLogado",
+                JSON.stringify(usuarioAtualizado)
+            );
+
+            usuarioLogado = usuarioAtualizado;
+            isAdmin = usuarioLogado.administrator ?? false;
+
+            montarMenu();
+            carregarPerfil();
+
+        } else {
+
+            mostrarMensagem(
+                data?.message ||
+                "Erro ao atualizar perfil."
+            );
+        }
+
+    } catch (e) {
+
+        mostrarMensagem(
+            "Erro ao conectar com o servidor."
+        );
+    }
+});
+
+document.getElementById("btnExcluirConta")
+.addEventListener("click", async () => {
+
+    if (!confirm("Excluir conta?")) return;
+
+    try {
+
+        const res = await fetch(`${API}/perfil/${userId}`, {
+            method: "DELETE"
+        });
+
+        const data = await lerResposta(res);
+
+        if (res.ok) {
+
+            localStorage.removeItem("usuarioLogado");
+
+            window.location.href = "index.html";
+
+            return;
+        }
+
+        mostrarMensagem(
+            data?.message ||
+            "Erro ao excluir conta."
+        );
+
+    } catch (e) {
+
+        mostrarMensagem(
+            "Erro ao conectar com o servidor."
+        );
+    }
+});
+
+document.getElementById("btnLogout")
+.addEventListener("click", () => {
+
+    localStorage.removeItem("usuarioLogado");
+
+    window.location.href = "index.html";
+});
+
+const perfilSenha = document.getElementById("perfilSenha");
+const toggleSenha = document.getElementById("toggleSenha");
+const iconeSenha = document.getElementById("iconeSenha");
+
+toggleSenha.addEventListener("click", () => {
+
+    if (perfilSenha.type === "password") {
+
+        perfilSenha.type = "text";
+
+        iconeSenha.src = "olho-aberto.png";
+
+    } else {
+
+        perfilSenha.type = "password";
+
+        iconeSenha.src = "olho-fechado.png";
+    }
+});
+
+montarMenu();
+carregarPerfilServidor();
+</script>
+
+</body>
+</html>

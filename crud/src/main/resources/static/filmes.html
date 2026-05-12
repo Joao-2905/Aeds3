@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gerenciar Filmes</title>
+
+<style>
+:root{
+--bg-body:#0f0f0f;
+--bg-container:#181818;
+--bg-input:#262626;
+--text-primary:#e4e4e4;
+--text-secondary:#9e9e9e;
+--accent:#bb86fc;
+--border-color:#2f2f2f;
+--danger:#cf6679;
+--success:#7ee787;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:radial-gradient(circle at top,#1a1a1a,#0f0f0f);
+color:var(--text-primary);
+display:flex;
+flex-direction:column;
+align-items:center;
+min-height:100vh;
+}
+
+.top-nav {
+    width: 100%;
+    background: #121212;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+    height: 70px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.tabs-nav-main {
+    display: flex;
+    height: 100%;
+    gap: 15px;
+}
+
+.tab-link {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    transition: 0.3s;
+}
+
+.tab-link:hover {
+    color: white;
+}
+
+.tab-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0%;
+    height: 3px;
+    background: var(--accent);
+    transition: 0.3s;
+    transform: translateX(-50%);
+}
+
+.tab-link.active-link {
+    color: var(--accent);
+}
+
+.tab-link.active-link::after {
+    width: 100%;
+}
+
+.btn-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-color);
+    padding: 6px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    color: var(--text-primary);
+}
+
+.btn-profile:hover {
+    border-color: var(--accent);
+    background: rgba(187, 134, 252, 0.05);
+}
+
+.user-info {
+    text-align: right;
+}
+
+.user-label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-secondary);
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.user-name {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.avatar {
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    border-radius: 4px;
+}
+
+.main-container{
+width:95%;
+max-width:1000px;
+margin-top:30px;
+margin-bottom:30px;
+min-height:80vh;
+border-radius:14px;
+background:linear-gradient(145deg,#1e1e1e,#141414);
+box-shadow:
+0 15px 50px rgba(0,0,0,.7),
+inset 0 0 0 1px rgba(255,255,255,.03);
+display:flex;
+flex-direction:column;
+overflow:hidden;
+}
+
+.tab-nav-sub{
+display:flex;
+background:#121212;
+border-bottom:1px solid var(--border-color);
+}
+
+.tab-button{
+flex:1;
+padding:18px;
+background:transparent;
+border:none;
+color:var(--text-secondary);
+cursor:pointer;
+text-transform:uppercase;
+font-size:12px;
+letter-spacing:1px;
+position:relative;
+transition:.3s;
+}
+
+.tab-button:hover{
+color:white;
+}
+
+.tab-button::after{
+content:"";
+position:absolute;
+bottom:0;
+left:50%;
+width:0%;
+height:3px;
+background:var(--accent);
+transition:.3s;
+transform:translateX(-50%);
+}
+
+.tab-button.active::after{
+width:100%;
+}
+
+.tab-button.active{
+color:var(--accent);
+}
+
+.tab-content-wrapper{
+flex:1;
+padding:40px;
+overflow-y:auto;
+}
+
+.tab-section{
+display:none;
+animation:fadeIn .3s ease;
+}
+
+.tab-section.active{
+display:block;
+}
+
+@keyframes fadeIn{
+from{opacity:0}
+to{opacity:1}
+}
+
+h2{
+margin-bottom:25px;
+color:var(--accent);
+padding-bottom:8px;
+position:relative;
+}
+
+h2::after{
+content:"";
+width:50px;
+height:2px;
+background:var(--accent);
+position:absolute;
+left:0;
+bottom:0;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+.full-width{
+grid-column:span 2;
+}
+
+.form-group{
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-size:13px;
+}
+
+input,textarea,select{
+width:100%;
+padding:12px;
+background:var(--bg-input);
+border:1px solid var(--border-color);
+border-radius:6px;
+color:var(--text-primary);
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+outline:none;
+border:1px solid var(--accent);
+box-shadow:0 0 8px rgba(187,134,252,.4);
+}
+
+.form-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.checkbox-box {
+    width: 100%;
+    min-height: 80px;
+    max-height: 180px;
+    overflow-y: auto;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 12px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.checkbox-item input {
+    width: auto;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+.checkbox-item:last-child {
+    margin-bottom: 0;
+}
+
+.search-box{
+display:flex;
+gap:15px;
+background:rgba(255,255,255,.03);
+padding:20px;
+border-radius:8px;
+margin-bottom:30px;
+border:1px solid var(--border-color);
+align-items:flex-end;
+}
+
+.btn-action{
+padding:12px 20px;
+border-radius:6px;
+border:none;
+cursor:pointer;
+font-weight:600;
+}
+
+.btn-save{
+background:linear-gradient(135deg,#bb86fc,#9a67ea);
+color:black;
+}
+
+.btn-update{
+margin-top:25px;
+}
+
+.btn-search{
+background:#333;
+color:white;
+}
+
+.btn-delete{
+background:transparent;
+border:1px solid var(--danger);
+color:var(--danger);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:14px;
+border-bottom:1px solid var(--border-color);
+text-align:left;
+vertical-align:top;
+}
+
+th{
+font-size:12px;
+color:var(--accent);
+text-transform:uppercase;
+}
+
+tbody tr:hover{
+background:rgba(255,255,255,.03);
+}
+
+.message{
+margin-top:18px;
+font-size:14px;
+font-weight:600;
+}
+
+.message.error{
+color:var(--danger);
+}
+
+.message.success{
+color:var(--success);
+}
+</style>
+</head>
+
+<body>
+
+<nav class="top-nav">
+    <div class="tabs-nav-main">
+        <a href="menuPrincipal.html" class="tab-link">Início</a>
+        <a href="usuario.html" class="tab-link">👥 Usuários</a>
+        <a href="filmes.html" class="tab-link active-link">🎬 Filmes</a>
+        <a href="genero.html" class="tab-link">🏷️ Gêneros</a>
+        <a href="avaliacao.html" class="tab-link">⭐ Avaliações</a>
+    </div>
+
+    <button class="btn-profile" type="button" id="btnProfile">
+        <div class="user-info">
+            <span class="user-label">Meu Perfil</span>
+            <span class="user-name" id="userNameLabel">Administrador</span>
+        </div>
+        <div class="avatar"></div>
+    </button>
+</nav>
+
+<div class="main-container">
+
+<nav class="tab-nav-sub">
+<button class="tab-button active" onclick="openTab(event,'lista')">Listar</button>
+<button class="tab-button" onclick="openTab(event,'cadastrar')">Cadastrar</button>
+<button class="tab-button" onclick="openTab(event,'atualizar')">Atualizar</button>
+<button class="tab-button" onclick="openTab(event,'excluir')">Excluir</button>
+</nav>
+
+<div class="tab-content-wrapper">
+
+<section id="lista" class="tab-section active">
+<h2>Catálogo de Filmes</h2>
+
+<button class="btn-action btn-search" style="margin-bottom:20px;" onclick="carregarFilmes()">
+Recarregar Lista
+</button>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Título</th>
+<th>Descrição</th>
+<th>Lançamento</th>
+<th>Gêneros</th>
+<th>Diretores</th>
+<th>Nota Média</th>
+</tr>
+</thead>
+
+<tbody id="tabelaFilmes">
+<tr>
+<td colspan="7">Nenhum filme carregado.</td>
+</tr>
+</tbody>
+</table>
+
+<div id="listaMessage" class="message"></div>
+</section>
+
+<section id="cadastrar" class="tab-section">
+<h2>Cadastrar Novo Filme</h2>
+
+<form id="cadastroFilmeForm">
+<div class="form-grid">
+
+<div class="form-group full-width">
+<label for="titulo">Título</label>
+<input type="text" id="titulo" required>
+</div>
+
+<div class="form-group full-width">
+<label for="descricao">Descrição</label>
+<textarea id="descricao" rows="4" required></textarea>
+</div>
+
+<div class="form-group">
+<label for="dataLancamento">Data de Lançamento</label>
+<input type="date" id="dataLancamento" required min="1900-01-01" max="2026-12-31">
+</div>
+
+<div class="form-group">
+<label for="diretores">Diretores</label>
+<input type="text" id="diretores" placeholder="Ex.: João Silva, Maria Souza" required>
+</div>
+
+<div class="form-group full-width">
+<label>Gêneros</label>
+<div id="generosCheckbox" class="checkbox-box"></div>
+<small class="form-hint">Marque um ou mais gêneros. É obrigatório selecionar pelo menos 1.</small>
+</div>
+
+</div>
+
+<button type="submit" class="btn-action btn-save">
+Salvar Filme
+</button>
+
+<div id="cadastroMessage" class="message"></div>
+</form>
+</section>
+
+<section id="atualizar" class="tab-section">
+<h2>Atualizar Filme</h2>
+
+<div class="search-box">
+<div style="flex:1">
+<label for="buscarIdAtualizar">ID do Filme</label>
+<input type="number" id="buscarIdAtualizar" min="1" placeholder="Digite o ID">
+</div>
+
+<button class="btn-action btn-search" type="button" id="btnBuscarAtualizar">
+Buscar
+</button>
+</div>
+
+<div class="form-grid">
+
+<div class="form-group full-width">
+<label for="tituloAtualizar">Título</label>
+<input type="text" id="tituloAtualizar">
+</div>
+
+<div class="form-group full-width">
+<label for="descricaoAtualizar">Descrição</label>
+<textarea id="descricaoAtualizar" rows="4"></textarea>
+</div>
+
+<div class="form-group">
+<label for="dataLancamentoAtualizar">Data de Lançamento</label>
+<input type="date" id="dataLancamentoAtualizar" min="1900-01-01" max="2026-12-31">
+</div>
+
+<div class="form-group">
+<label for="diretoresAtualizar">Diretores</label>
+<input type="text" id="diretoresAtualizar" placeholder="Ex.: João Silva, Maria Souza">
+</div>
+
+<div class="form-group full-width">
+<label>Gêneros</label>
+<div id="generosCheckboxAtualizar" class="checkbox-box"></div>
+<small class="form-hint">Marque um ou mais gêneros. É obrigatório selecionar pelo menos 1.</small>
+</div>
+
+</div>
+
+<button class="btn-action btn-save btn-update" type="button" id="btnAtualizarFilme">
+Atualizar
+</button>
+
+<div id="atualizarMessage" class="message"></div>
+</section>
+
+<section id="excluir" class="tab-section">
+<h2>Excluir Filme</h2>
+
+<div class="search-box">
+<div style="flex:1">
+<label for="buscarIdExcluir">ID do Filme</label>
+<input type="number" id="buscarIdExcluir" min="1" placeholder="Digite o ID">
+</div>
+
+<button class="btn-action btn-search" type="button" id="btnBuscarExcluir">
+Buscar
+</button>
+</div>
+
+<div id="filmeExcluirPreview" style="margin-bottom:20px;color:#ccc;"></div>
+
+<button class="btn-action btn-delete" type="button" id="btnExcluirFilme">
+Excluir
+</button>
+
+<div id="excluirMessage" class="message"></div>
+</section>
+
+</div>
+</div>
+
+<script>
+const API_FILMES = "http://localhost:8080/filmes";
+const API_GENEROS = "http://localhost:8080/generos";
+
+let mapaGeneros = {};
+let usuarioLogado = null;
+
+try {
+    usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+} catch (e) {
+    usuarioLogado = null;
+}
+
+if (!usuarioLogado) {
+    window.location.href = "index.html";
+}
+
+if (usuarioLogado.administrator !== true) {
+    window.location.href = "menuUsuario.html";
+}
+
+document.getElementById("userNameLabel").textContent =
+    usuarioLogado.username || usuarioLogado.email || "Administrador";
+
+document.getElementById("btnProfile").addEventListener("click", function () {
+    window.location.href = "profile.html";
+});
+
+function openTab(evt, tabName) {
+    const tabs = document.getElementsByClassName("tab-section");
+    const buttons = document.getElementsByClassName("tab-button");
+
+    for (const t of tabs) t.classList.remove("active");
+    for (const b of buttons) b.classList.remove("active");
+
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.classList.add("active");
+
+    if (tabName === "lista") {
+        carregarFilmes();
+    }
+}
+
+function showMessage(elementId, text, type = "error") {
+    const el = document.getElementById(elementId);
+    el.textContent = text;
+    el.className = `message ${type}`;
+}
+
+function limparMessage(elementId) {
+    const el = document.getElementById(elementId);
+    el.textContent = "";
+    el.className = "message";
+}
+
+function validarAnoData(data) {
+    if (!data) return false;
+    const partes = data.split("-");
+    if (partes.length !== 3) return false;
+    const ano = parseInt(partes[0], 10);
+    return ano >= 1900 && ano <= 2026;
+}
+
+function obterId(filme) {
+    return filme.ID ?? filme.id ?? "-";
+}
+
+function obterTitulo(filme) {
+    return filme.title ?? filme.titulo ?? "-";
+}
+
+function obterDescricao(filme) {
+    return filme.description ?? filme.descricao ?? "";
+}
+
+function obterDiretores(filme) {
+    if (Array.isArray(filme.directors)) return filme.directors.join(", ");
+    if (typeof filme.diretores === "string") return filme.diretores;
+    if (typeof filme.directors === "string") return filme.directors;
+    return "";
+}
+
+function obterGenreID(filme) {
+    return filme.genreID ?? filme.generoID ?? "";
+}
+
+function obterGenreIDs(filme) {
+    if (Array.isArray(filme.genreIDs)) return filme.genreIDs;
+    if (Array.isArray(filme.generosIDs)) return filme.generosIDs;
+
+    const unico = obterGenreID(filme);
+    if (unico) return [unico];
+
+    return [];
+}
+
+function obterGenerosSelecionados(containerId) {
+    return Array.from(
+        document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`)
+    )
+    .map(cb => parseInt(cb.value))
+    .filter(id => !isNaN(id) && id > 0);
+}
+
+function marcarGenerosSelecionados(containerId, genreIDs) {
+    const idsTexto = genreIDs.map(id => String(id));
+
+    document.querySelectorAll(`#${containerId} input[type="checkbox"]`).forEach(cb => {
+        cb.checked = idsTexto.includes(cb.value);
+    });
+}
+
+function limparGenerosSelecionados(containerId) {
+    document.querySelectorAll(`#${containerId} input[type="checkbox"]`).forEach(cb => {
+        cb.checked = false;
+    });
+}
+
+async function buscarGenerosDoFilme(filmID) {
+    try {
+        if (!filmID || filmID === "-") {
+            return [];
+        }
+
+        const response = await fetch(`${API_FILMES}/${filmID}/generos`);
+        const data = await response.json();
+
+        if (!response.ok || !Array.isArray(data)) {
+            return [];
+        }
+
+        return data
+            .map(rel => rel.genreID ?? rel.generoID ?? rel.genreId ?? rel.generoId)
+            .filter(id => id);
+    } catch (e) {
+        return [];
+    }
+}
+
+async function obterNomesGenerosDoFilme(filme) {
+    const filmID = obterId(filme);
+
+    let ids = [];
+
+    if (filmID && filmID !== "-") {
+        ids = await buscarGenerosDoFilme(filmID);
+    }
+
+    if (ids.length === 0) {
+        ids = obterGenreIDs(filme);
+    }
+
+    if (ids.length === 0) {
+        return "-";
+    }
+
+    return ids.map(id => mapaGeneros[id] || `ID ${id}`).join(", ");
+}
+
+function formatarData(valor) {
+    if (!valor) return "-";
+    const texto = String(valor);
+
+    if (/^\d{8}$/.test(texto)) {
+        return `${texto.substring(6, 8)}/${texto.substring(4, 6)}/${texto.substring(0, 4)}`;
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+        const [ano, mes, dia] = texto.split("-");
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    return texto;
+}
+
+function converterDataParaInput(valor) {
+    if (!valor) return "";
+    const texto = String(valor);
+
+    if (/^\d{8}$/.test(texto)) {
+        return `${texto.substring(0, 4)}-${texto.substring(4, 6)}-${texto.substring(6, 8)}`;
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) return texto;
+    return "";
+}
+
+function converterInputParaAAAAMMDD(valor) {
+    if (!valor) return 0;
+    return parseInt(valor.replaceAll("-", ""));
+}
+
+function obterDataLancamento(filme) {
+    return filme.releaseDate ?? filme.dataLancamento ?? filme.lancamento ?? "";
+}
+
+function obterNotaMedia(filme) {
+    const nota = filme.rating ?? filme.notaMedia ?? filme.media ?? 0;
+    return Number(nota).toFixed(1);
+}
+
+function criarCheckboxGenero(id, nome) {
+    return `
+        <label class="checkbox-item">
+            <input type="checkbox" value="${id}">
+            <span>${nome}</span>
+        </label>
+    `;
+}
+
+async function carregarGeneros() {
+    try {
+        const response = await fetch(API_GENEROS);
+        const data = await response.json();
+
+        const boxCadastro = document.getElementById("generosCheckbox");
+        const boxAtualizar = document.getElementById("generosCheckboxAtualizar");
+
+        mapaGeneros = {};
+        boxCadastro.innerHTML = "";
+        boxAtualizar.innerHTML = "";
+
+        if (!response.ok || !Array.isArray(data)) {
+            boxCadastro.innerHTML = "<span style='color:#999;'>Nenhum gênero carregado.</span>";
+            boxAtualizar.innerHTML = "<span style='color:#999;'>Nenhum gênero carregado.</span>";
+            return;
+        }
+
+        data.forEach(genero => {
+            const id = genero.id ?? genero.ID;
+            const nome = genero.name ?? genero.nome;
+
+            mapaGeneros[id] = nome;
+
+            boxCadastro.innerHTML += criarCheckboxGenero(id, nome);
+            boxAtualizar.innerHTML += criarCheckboxGenero(id, nome);
+        });
+
+    } catch (e) {
+        console.error("Erro ao carregar gêneros:", e);
+    }
+}
+
+async function carregarFilmes() {
+    limparMessage("listaMessage");
+    const tabela = document.getElementById("tabelaFilmes");
+    tabela.innerHTML = `<tr><td colspan="7">Carregando...</td></tr>`;
+
+    try {
+        const response = await fetch(API_FILMES);
+        let data = null;
+
+        try {
+            data = await response.json();
+        } catch (_) {
+            data = null;
+        }
+
+        if (!response.ok) {
+            showMessage("listaMessage", data?.message || "Erro ao carregar filmes.");
+            tabela.innerHTML = `<tr><td colspan="7">Erro ao carregar filmes.</td></tr>`;
+            return;
+        }
+
+        if (!Array.isArray(data) || data.length === 0) {
+            tabela.innerHTML = `<tr><td colspan="7">Nenhum filme cadastrado.</td></tr>`;
+            return;
+        }
+
+        const linhas = [];
+
+        for (const filme of data) {
+            const nomesGeneros = await obterNomesGenerosDoFilme(filme);
+
+            linhas.push(`
+                <tr>
+                    <td>${obterId(filme)}</td>
+                    <td>${obterTitulo(filme)}</td>
+                    <td>${obterDescricao(filme) || "-"}</td>
+                    <td>${formatarData(obterDataLancamento(filme))}</td>
+                    <td>${nomesGeneros}</td>
+                    <td>${obterDiretores(filme) || "-"}</td>
+                    <td>${obterNotaMedia(filme)}</td>
+                </tr>
+            `);
+        }
+
+        tabela.innerHTML = linhas.join("");
+
+    } catch (error) {
+        tabela.innerHTML = `<tr><td colspan="7">Erro ao conectar com o servidor.</td></tr>`;
+        showMessage("listaMessage", "Erro ao conectar com o servidor.");
+    }
+}
+
+document.getElementById("cadastroFilmeForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    limparMessage("cadastroMessage");
+
+    const titulo = document.getElementById("titulo").value.trim();
+    const descricao = document.getElementById("descricao").value.trim();
+    const dataLancamento = document.getElementById("dataLancamento").value;
+    const diretoresTexto = document.getElementById("diretores").value.trim();
+
+    const generosIDs = obterGenerosSelecionados("generosCheckbox");
+    const generoID = generosIDs[0];
+
+    if (!titulo || !descricao || !dataLancamento || !diretoresTexto) {
+        showMessage("cadastroMessage", "Preencha todos os campos.");
+        return;
+    }
+
+    if (!validarAnoData(dataLancamento)) {
+        showMessage("cadastroMessage", "Ano deve estar entre 1900 e 2026.");
+        return;
+    }
+
+    if (generosIDs.length === 0) {
+        showMessage("cadastroMessage", "Selecione pelo menos um gênero.");
+        return;
+    }
+
+    const filme = {
+        title: titulo,
+        description: descricao,
+        releaseDate: converterInputParaAAAAMMDD(dataLancamento),
+        directors: diretoresTexto.split(",").map(d => d.trim()).filter(Boolean),
+        genreID: generoID,
+        genreIDs: generosIDs
+    };
+
+    try {
+        const response = await fetch(API_FILMES, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(filme)
+        });
+
+        let data = null;
+        try {
+            data = await response.json();
+        } catch (_) {
+            data = null;
+        }
+
+        if (response.ok && data && ((data.ID ?? data.id) > 0 || data.title || data.titulo)) {
+            showMessage("cadastroMessage", "Filme cadastrado com sucesso!", "success");
+            document.getElementById("cadastroFilmeForm").reset();
+            limparGenerosSelecionados("generosCheckbox");
+            carregarFilmes();
+        } else {
+            showMessage("cadastroMessage", data?.message || "Erro ao cadastrar filme.");
+        }
+    } catch (error) {
+        showMessage("cadastroMessage", "Erro ao conectar com o servidor.");
+    }
+});
+
+document.getElementById("btnBuscarAtualizar").addEventListener("click", async function () {
+    limparMessage("atualizarMessage");
+    const id = document.getElementById("buscarIdAtualizar").value.trim();
+
+    if (!id) {
+        showMessage("atualizarMessage", "Informe o ID.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_FILMES}/${id}`);
+        const data = await response.json();
+
+        if (response.ok && !(data && data.message)) {
+            document.getElementById("tituloAtualizar").value = obterTitulo(data);
+            document.getElementById("descricaoAtualizar").value = obterDescricao(data);
+            document.getElementById("dataLancamentoAtualizar").value = converterDataParaInput(obterDataLancamento(data));
+            document.getElementById("diretoresAtualizar").value = obterDiretores(data);
+
+            let generosDoFilme = await buscarGenerosDoFilme(obterId(data));
+
+            if (generosDoFilme.length === 0) {
+                generosDoFilme = obterGenreIDs(data);
+            }
+
+            marcarGenerosSelecionados("generosCheckboxAtualizar", generosDoFilme);
+
+            showMessage("atualizarMessage", "Filme carregado.", "success");
+        } else {
+            showMessage("atualizarMessage", data?.message || "Filme não encontrado.");
+        }
+    } catch (error) {
+        showMessage("atualizarMessage", "Erro no servidor.");
+    }
+});
+
+document.getElementById("btnAtualizarFilme").addEventListener("click", async function () {
+    limparMessage("atualizarMessage");
+    const id = document.getElementById("buscarIdAtualizar").value.trim();
+
+    const titulo = document.getElementById("tituloAtualizar").value.trim();
+    const descricao = document.getElementById("descricaoAtualizar").value.trim();
+    const dataLancamento = document.getElementById("dataLancamentoAtualizar").value;
+    const diretoresTexto = document.getElementById("diretoresAtualizar").value.trim();
+
+    const generosIDs = obterGenerosSelecionados("generosCheckboxAtualizar");
+    const generoID = generosIDs[0];
+
+    if (!id || !titulo || !descricao || !dataLancamento || !diretoresTexto) {
+        showMessage("atualizarMessage", "Preencha todos os campos antes de atualizar.");
+        return;
+    }
+
+    if (!validarAnoData(dataLancamento)) {
+        showMessage("atualizarMessage", "Ano deve estar entre 1900 e 2026.");
+        return;
+    }
+
+    if (generosIDs.length === 0) {
+        showMessage("atualizarMessage", "Selecione pelo menos um gênero.");
+        return;
+    }
+
+    const filme = {
+        ID: parseInt(id),
+        title: titulo,
+        description: descricao,
+        releaseDate: converterInputParaAAAAMMDD(dataLancamento),
+        directors: diretoresTexto.split(",").map(d => d.trim()).filter(Boolean),
+        genreID: generoID,
+        genreIDs: generosIDs
+    };
+
+    try {
+        const response = await fetch(`${API_FILMES}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(filme)
+        });
+
+        let data = null;
+        try {
+            data = await response.json();
+        } catch (_) {
+            data = null;
+        }
+
+        if (response.ok && !data?.message) {
+            showMessage("atualizarMessage", "Filme atualizado!", "success");
+            carregarFilmes();
+        } else {
+            showMessage("atualizarMessage", data?.message || "Erro ao atualizar.");
+        }
+    } catch (error) {
+        showMessage("atualizarMessage", "Erro no servidor.");
+    }
+});
+
+document.getElementById("btnBuscarExcluir").addEventListener("click", async function () {
+    limparMessage("excluirMessage");
+    const id = document.getElementById("buscarIdExcluir").value.trim();
+
+    if (!id) {
+        showMessage("excluirMessage", "Informe o ID do filme.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_FILMES}/${id}`);
+        const data = await response.json();
+
+        if (response.ok && !data.message) {
+            const nomesGeneros = await obterNomesGenerosDoFilme(data);
+
+            document.getElementById("filmeExcluirPreview").innerHTML = `
+                <strong>ID:</strong> ${obterId(data)}<br>
+                <strong>Título:</strong> ${obterTitulo(data)}<br>
+                <strong>Descrição:</strong> ${obterDescricao(data) || "-"}<br>
+                <strong>Data:</strong> ${formatarData(obterDataLancamento(data))}<br>
+                <strong>Gêneros:</strong> ${nomesGeneros}<br>
+                <strong>Diretores:</strong> ${obterDiretores(data) || "-"}<br>
+                <strong>Nota Média:</strong> ${obterNotaMedia(data)}
+            `;
+            showMessage("excluirMessage", "Filme encontrado.", "success");
+        } else {
+            showMessage("excluirMessage", data?.message || "Não encontrado.");
+        }
+    } catch (e) {
+        showMessage("excluirMessage", "Erro ao conectar com o servidor.");
+    }
+});
+
+document.getElementById("btnExcluirFilme").addEventListener("click", async function () {
+    limparMessage("excluirMessage");
+    const id = document.getElementById("buscarIdExcluir").value.trim();
+
+    if (!id) {
+        showMessage("excluirMessage", "Informe o ID do filme.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_FILMES}/${id}`, { method: "DELETE" });
+        let data = null;
+
+        try {
+            data = await response.json();
+        } catch (_) {
+            data = null;
+        }
+
+        if (response.ok && !data?.message?.toLowerCase?.().includes("não encontrado")) {
+            showMessage("excluirMessage", data?.message || "Excluído com sucesso!", "success");
+            document.getElementById("filmeExcluirPreview").innerHTML = "";
+            document.getElementById("buscarIdExcluir").value = "";
+            carregarFilmes();
+        } else {
+            showMessage("excluirMessage", data?.message || "Erro ao excluir.");
+        }
+    } catch (e) {
+        showMessage("excluirMessage", "Erro ao conectar com o servidor.");
+    }
+});
+
+window.addEventListener("load", async () => {
+    await carregarGeneros();
+    await carregarFilmes();
+});
+</script>
+
+</body>
+</html>
