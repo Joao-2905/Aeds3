@@ -5,27 +5,24 @@ Sistema para avaliação de filmes
 
 ## ▶️ Como executar
 
-1. Baixe o arquivo `filmes.jar`  
-   > Recomenda-se salvar em uma **pasta vazia**
+1. Baixe o arquivo `Tp_fase3.zip`  
+   > Pode extrair logo em seguida
 
 2. Abra o **Prompt de Comando (cmd)** na pasta onde o arquivo foi salvo  
    - Dica: clique na barra de endereço da pasta, digite `cmd` e pressione Enter
 
 3. Execute o comando:
+    cd jar
+   Em seguida:
+    java -jar crud-0.0.1-SNAPSHOT.jar
 
-    java -jar filmes.jar
-
+4. Abra o navegador:
+    http://localhost:8080
 ---
 
 ## ⚠️ Observação importante
 
-O sistema cria automaticamente uma pasta chamada `data` no local onde o `.jar` for executado.
-
-- Essa pasta conterá os arquivos `.bin` utilizados pelo sistema
-- Exemplo:
-  - Se o `.jar` estiver na Área de Trabalho → a pasta `data` será criada lá
-
-👉 Por isso, é recomendado executar o programa em uma **pasta dedicada/vazia**
+O sistema atualmente possui duas pastas data, a da raíz está em processo de modificação. Tudo feito no site atualizara a pasta 'data' dentro da pasta 'target'.
 
 ---
 
@@ -37,14 +34,16 @@ O sistema possui dois tipos de usuários:
 - Acesso à própria conta
 - Criação de avaliações
 - Visualização de avaliações
+- Possibilidade de ordenar por meio da ordenação externa
 
 ### 🛠️ Administrador
-- Possui todas as permissões de um usuário
+- Possui todas as permissões de um usuário (menos uso da ordenação externa)
 - Acesso completo aos CRUDs:
   - Usuários
   - Gêneros
   - Filmes
   - Avaliações
+- Possibilidade de ordenar por meio da Árvore B+
 
 ---
 
