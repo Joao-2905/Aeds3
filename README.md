@@ -37,6 +37,7 @@ Se tiver problemas ao executar o site, execute:
 
 antes de:
 
+`cd target`
 `java -jar crud-0.0.1-SNAPSHOT.jar`
 
 O sistema atualmente possui duas pastas `data`.
