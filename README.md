@@ -12,7 +12,7 @@ Sistema para avaliação de filmes
    - Dica: clique na barra de endereço da pasta, digite `cmd` e pressione Enter
 
 3. Execute o comando:
-    `cd jar`
+    `cd target`
    Em seguida:
     `java -jar crud-0.0.1-SNAPSHOT.jar`
 
