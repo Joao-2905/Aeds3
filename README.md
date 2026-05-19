@@ -1,35 +1,50 @@
 # Aeds3 🎬
-Sistema para avaliação de filmes
 
----
+Sistema para avaliação de filmes.
 
 ## ▶️ Como executar
 
-1. Baixe o arquivo `Tp_fase3.zip`  
-   > Pode extrair o arquivo logo em seguida.
+Baixe o arquivo `Tp_fase3.zip`.
 
-   Após extrair, entre na pasta `crud`.
+Extraia o arquivo.
 
-2. Abra o **Prompt de Comando (cmd)** dentro da pasta `crud`.
-   
-   💡 Dica:
-   Clique na barra de endereço da pasta, digite `cmd` e pressione Enter.
+Após extrair, entre na pasta `crud`.
 
-3. Execute o comando:
-    `cd target`
-   Em seguida:
-    `java -jar crud-0.0.1-SNAPSHOT.jar`
+Abra o **Prompt de Comando (cmd)** dentro da pasta `crud`.
 
-4. Abra o navegador:
-    `http://localhost:8080`
+💡 Dica:
+Clique na barra de endereço da pasta, digite `cmd` e pressione Enter.
+
+Execute o comando:
+
+cd target
+
+Em seguida:
+
+java -jar crud-0.0.1-SNAPSHOT.jar
+
+Abra o navegador:
+
+http://localhost:8080
+
 ---
 
 ## ⚠️ Observação importante
 
-Se tiver problemas ao executar o site, execute `.\mvnw.cmd clean package` antes de `java -jar crud-0.0.1-SNAPSHOT.jar`.
+Se tiver problemas ao executar o site, execute:
 
-O sistema atualmente possui duas pastas `data`. A pasta `data` da raiz está sendo utilizada apenas para testes.
+.\mvnw.cmd clean package
+
+antes de:
+
+java -jar crud-0.0.1-SNAPSHOT.jar
+
+O sistema atualmente possui duas pastas `data`.
+
+A pasta `data` da raiz está sendo utilizada apenas para testes.
+
 Lembre-se de executar o comando `cd target`, conforme instruído anteriormente, para garantir que os arquivos sejam salvos na pasta correta.
+
 Tudo o que for feito no sistema será armazenado na pasta `data` localizada dentro da pasta `target`.
 
 ---
@@ -39,28 +54,35 @@ Tudo o que for feito no sistema será armazenado na pasta `data` localizada dent
 O sistema possui dois tipos de usuários:
 
 ### 👥 Usuário
+
 - Acesso à própria conta
 - Criação de avaliações
 - Visualização de avaliações
 - Possibilidade de ordenar por meio da ordenação externa
 
 ### 🛠️ Administrador
-- Possui todas as permissões de um usuário (menos uso da ordenação externa)
-- Acesso completo aos CRUDs:
-  - Usuários
-  - Gêneros
-  - Filmes
-  - Avaliações
-- Possibilidade de ordenar por meio da Árvore B+
+
+Possui todas as permissões de um usuário (menos uso da ordenação externa).
+
+Acesso completo aos CRUDs:
+
+- Usuários
+- Gêneros
+- Filmes
+- Avaliações
+
+Possibilidade de ordenar por meio da Árvore B+.
 
 ---
 
 ## 🔐 Controle de administradores
 
-- Apenas um **administrador** pode promover outro usuário a administrador
-- Para evitar problemas, o sistema já vem com um **administrador padrão**
+Apenas um administrador pode promover outro usuário a administrador.
 
-👉 As credenciais desse administrador são exibidas automaticamente na **primeira execução do sistema**
+Para evitar problemas, o sistema já vem com um administrador padrão.
 
-- email: admin@admin.com
-- senha: 123
+👉 As credenciais desse administrador são exibidas automaticamente na primeira execução do sistema.
+
+email: admin@admin.com
+
+senha: 123
