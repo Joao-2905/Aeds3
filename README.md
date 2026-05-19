@@ -33,11 +33,11 @@ Abra o navegador:
 
 Se tiver problemas ao executar o site, execute:
 
-.\mvnw.cmd clean package
+`.\mvnw.cmd clean package`
 
 antes de:
 
-java -jar crud-0.0.1-SNAPSHOT.jar
+`java -jar crud-0.0.1-SNAPSHOT.jar`
 
 O sistema atualmente possui duas pastas `data`.
 
