@@ -12,15 +12,17 @@ Sistema para avaliação de filmes
    - Dica: clique na barra de endereço da pasta, digite `cmd` e pressione Enter
 
 3. Execute o comando:
-    cd jar
+    'cd jar'
    Em seguida:
-    java -jar crud-0.0.1-SNAPSHOT.jar
+    'java -jar crud-0.0.1-SNAPSHOT.jar'
 
 4. Abra o navegador:
-    http://localhost:8080
+    'http://localhost:8080'
 ---
 
 ## ⚠️ Observação importante
+
+Se tiver problemas ao executar o site, use '.\mvnw.cmd clean package' antes de 'java -jar crud-0.0.1-SNAPSHOT.jar'.
 
 O sistema atualmente possui duas pastas data, a da raíz está em processo de modificação. Tudo feito no site atualizara a pasta 'data' dentro da pasta 'target'.
 
