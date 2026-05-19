@@ -6,7 +6,7 @@ Sistema para avaliação de filmes
 ## ▶️ Como executar
 
 1. Baixe o arquivo `Tp_fase3.zip`  
-   > Pode extrair logo em seguida
+   > Pode extrair o arquivo logo em seguida
 
 2. Abra o **Prompt de Comando (cmd)** na pasta onde o arquivo foi salvo  
    - Dica: clique na barra de endereço da pasta, digite `cmd` e pressione Enter
@@ -22,7 +22,7 @@ Sistema para avaliação de filmes
 
 ## ⚠️ Observação importante
 
-Se tiver problemas ao executar o site, use `.\mvnw.cmd clean package` antes de `java -jar crud-0.0.1-SNAPSHOT.jar`.
+Se tiver problemas ao executar o site, execute `.\mvnw.cmd clean package` antes de `java -jar crud-0.0.1-SNAPSHOT.jar`.
 
 O sistema atualmente possui duas pastas `data`. A pasta `data` da raiz está sendo utilizada apenas para testes.
 Lembre-se de executar o comando `cd target`, conforme instruído anteriormente, para garantir que os arquivos sejam salvos na pasta correta.
