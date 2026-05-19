@@ -6,10 +6,14 @@ Sistema para avaliação de filmes
 ## ▶️ Como executar
 
 1. Baixe o arquivo `Tp_fase3.zip`  
-   > Pode extrair o arquivo logo em seguida
+   > Pode extrair o arquivo logo em seguida.
 
-2. Abra o **Prompt de Comando (cmd)** na pasta onde o arquivo foi extraído  
-   - Dica: clique na barra de endereço da pasta, digite `cmd` e pressione Enter
+   Após extrair, entre na pasta `crud`.
+
+2. Abra o **Prompt de Comando (cmd)** dentro da pasta `crud`.
+   
+   💡 Dica:
+   Clique na barra de endereço da pasta, digite `cmd` e pressione Enter.
 
 3. Execute o comando:
     `cd target`
