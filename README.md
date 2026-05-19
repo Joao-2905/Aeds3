@@ -17,15 +17,15 @@ Clique na barra de endereço da pasta, digite `cmd` e pressione Enter.
 
 Execute o comando:
 
-cd target
+`cd target`
 
 Em seguida:
 
-java -jar crud-0.0.1-SNAPSHOT.jar
+`java -jar crud-0.0.1-SNAPSHOT.jar`
 
 Abra o navegador:
 
-http://localhost:8080
+`http://localhost:8080`
 
 ---
 
