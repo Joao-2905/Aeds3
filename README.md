@@ -8,7 +8,7 @@ Sistema para avaliação de filmes
 1. Baixe o arquivo `Tp_fase3.zip`  
    > Pode extrair o arquivo logo em seguida
 
-2. Abra o **Prompt de Comando (cmd)** na pasta onde o arquivo foi salvo  
+2. Abra o **Prompt de Comando (cmd)** na pasta onde o arquivo foi extraído  
    - Dica: clique na barra de endereço da pasta, digite `cmd` e pressione Enter
 
 3. Execute o comando:
