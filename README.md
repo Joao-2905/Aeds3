@@ -35,7 +35,13 @@ Abra o navegador:
 
 ---
 
+## Requisitos
+
+- Java 21 ou superior
+
 ## ⚠️ Observação importante
+
+---
 
 Se tiver problemas ao executar o site, execute:
 
