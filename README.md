@@ -33,15 +33,15 @@ Abra o navegador:
 
 `http://localhost:8080`
 
----
 
 ## Requisitos
 
 - Java 21 ou superior
 
+---
+
 ## ⚠️ Observação importante
 
----
 
 Se tiver problemas ao executar o site, execute:
 
