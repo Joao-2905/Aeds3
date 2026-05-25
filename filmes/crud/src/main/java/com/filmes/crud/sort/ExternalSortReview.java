@@ -100,7 +100,7 @@ public class ExternalSortReview {
         return runIndex;
     }
 
-    // 🔥 SALVAR RUN ORDENADA
+    //  SALVAR RUN ORDENADA
     private void salvarRun(ArrayList<Review> buffer, int index) throws Exception {
 
         buffer.sort(Comparator
@@ -119,7 +119,7 @@ public class ExternalSortReview {
     }
 
     // =========================
-    // 🔥 FASE 2 - INTERCALAÇÃO
+    //  FASE 2 - INTERCALAÇÃO
     // =========================
     private void intercalarRuns(int totalRuns) throws Exception {
 
@@ -132,7 +132,7 @@ public class ExternalSortReview {
 
         int tempIndex = 0;
 
-        // 🔥 merge até sobrar 1 arquivo
+        //  merge até sobrar 1 arquivo
         while (fila.size() > 1) {
 
             String f1 = fila.poll();
