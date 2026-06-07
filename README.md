@@ -23,9 +23,13 @@ Clique na barra de endereço da pasta, digite `cmd` e pressione Enter.
 
 Execute o comando:
 
-`cd target`
+`.\mvnw.cmd clean package`
 
 Em seguida:
+
+`cd target`
+
+E por fim:
 
 `java -jar crud-0.0.1-SNAPSHOT.jar`
 
@@ -41,16 +45,6 @@ Abra o navegador:
 ---
 
 ## ⚠️ Observação importante
-
-
-Se tiver problemas ao executar o site, execute:
-
-`.\mvnw.cmd clean package`
-
-antes de:
-
-`cd target` e 
-`java -jar crud-0.0.1-SNAPSHOT.jar`
 
 O sistema atualmente possui duas pastas `data`.
 
@@ -85,6 +79,7 @@ Acesso completo aos CRUDs:
 - Avaliações
 
 Possibilidade de ordenar por meio da Árvore B+.
+Possibilidade de fazer backups compactados.
 
 ---
 
