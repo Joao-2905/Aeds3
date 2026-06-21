@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+
+<style>
+:root {
+    --bg-body: #0f0f0f;
+    --bg-container: #181818;
+    --bg-input: #262626;
+    --text-primary: #e4e4e4;
+    --text-secondary: #9e9e9e;
+    --accent: #bb86fc;
+    --error-color: #ff6b6b;
+    --success-color: #7ee787;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: radial-gradient(circle at top, #1a1a1a, #0f0f0f);
+    color: var(--text-primary);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    background: linear-gradient(145deg, #1e1e1e, #141414);
+    border-radius: 14px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    text-align: center;
+}
+
+h2 {
+    color: var(--accent);
+    font-size: 32px;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    display: block;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg-input);
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: white;
+}
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input {
+    padding-right: 52px;
+}
+
+.eye-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.eye-button img {
+    width: 26px;
+    height: 26px;
+    opacity: 0.8;
+    transition: 0.2s;
+}
+
+.eye-button:hover img {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #bb86fc, #9a67ea);
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-cadastro {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    color: var(--accent);
+    cursor: pointer;
+}
+
+.btn-cadastro:hover {
+    background: var(--accent);
+    color: black;
+}
+
+.message {
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+.error {
+    color: var(--error-color);
+}
+
+.success {
+    color: var(--success-color);
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-container">
+    <h2>Entrar</h2>
+
+    <form id="loginForm">
+
+        <div class="input-group">
+            <label>E-mail</label>
+            <input type="email" id="email" required>
+        </div>
+
+        <div class="input-group">
+            <label>Senha</label>
+
+            <div class="password-wrapper">
+
+                <input type="password" id="password" required>
+
+                <button
+                    type="button"
+                    class="eye-button"
+                    id="togglePassword"
+                    aria-label="Mostrar senha"
+                    title="Mostrar senha"
+                >
+
+                    <img
+                        id="eyeIcon"
+                        src="olho-fechado.png"
+                        alt="Mostrar senha"
+                    >
+
+                </button>
+
+            </div>
+        </div>
+
+        <button type="submit" class="btn-login">
+            Acessar Sistema
+        </button>
+
+        <button type="button" class="btn-cadastro" onclick="irCadastro()">
+            Criar Conta
+        </button>
+
+        <div id="message" class="message"></div>
+
+    </form>
+</div>
+
+<script>
+
+function irCadastro() {
+    window.location.href = "cadastro.html";
+}
+
+const form = document.getElementById("loginForm");
+const msg = document.getElementById("message");
+
+const passwordInput = document.getElementById("password");
+const togglePassword = document.getElementById("togglePassword");
+const eyeIcon = document.getElementById("eyeIcon");
+
+localStorage.removeItem("usuarioLogado");
+
+togglePassword.addEventListener("click", () => {
+
+    const senhaEscondida = passwordInput.type === "password";
+
+    if (senhaEscondida) {
+
+        passwordInput.type = "text";
+
+        eyeIcon.src = "olho-aberto.png";
+        eyeIcon.alt = "Esconder senha";
+
+        togglePassword.setAttribute(
+            "aria-label",
+            "Esconder senha"
+        );
+
+        togglePassword.setAttribute(
+            "title",
+            "Esconder senha"
+        );
+
+    } else {
+
+        passwordInput.type = "password";
+
+        eyeIcon.src = "olho-fechado.png";
+        eyeIcon.alt = "Mostrar senha";
+
+        togglePassword.setAttribute(
+            "aria-label",
+            "Mostrar senha"
+        );
+
+        togglePassword.setAttribute(
+            "title",
+            "Mostrar senha"
+        );
+    }
+});
+
+function salvarUsuario(data) {
+
+    const usuario = {
+        id: data.id ?? data.ID ?? 0,
+        username: data.username ?? "",
+        email: data.email ?? "",
+        administrator: data.administrator ?? false
+    };
+
+    localStorage.setItem(
+        "usuarioLogado",
+        JSON.stringify(usuario)
+    );
+
+    return usuario;
+}
+
+form.addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    msg.textContent = "";
+    msg.className = "message";
+
+    const email = document
+        .getElementById("email")
+        .value
+        .trim();
+
+    const password = document
+        .getElementById("password")
+        .value
+        .trim();
+
+    if (!email || !password) {
+
+        msg.textContent = "Preencha todos os campos.";
+        msg.className = "message error";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:8080/auth/login",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            }
+        );
+
+        let data = null;
+
+        try {
+            data = await response.json();
+        } catch (_) {
+            data = null;
+        }
+
+        if (
+            response.ok &&
+            data &&
+            (data.id || data.ID)
+        ) {
+
+            msg.textContent =
+                "Login realizado com sucesso!";
+
+            msg.className =
+                "message success";
+
+            const usuario = salvarUsuario(data);
+
+            setTimeout(() => {
+
+                if (
+                    usuario.administrator === true
+                ) {
+
+                    window.location.href =
+                        "menuPrincipal.html";
+
+                } else {
+
+                    window.location.href =
+                        "menuUsuario.html";
+                }
+
+            }, 800);
+
+        } else {
+
+            msg.textContent =
+                data?.message ||
+                "Email ou senha incorretos.";
+
+            msg.className =
+                "message error";
+        }
+
+    } catch (err) {
+
+        msg.textContent =
+            "Erro ao conectar com o servidor.";
+
+        msg.className =
+            "message error";
+    }
+});
+
+</script>
+
+</body>
+</html>

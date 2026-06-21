@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Filmes</title>
+
+<style>
+:root{
+--bg-body:#0f0f0f;
+--bg-container:#181818;
+--text-primary:#e4e4e4;
+--text-secondary:#9e9e9e;
+--accent:#bb86fc;
+--border-color:#2f2f2f;
+}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+body{
+background:radial-gradient(circle at top,#1a1a1a,#0f0f0f);
+color:var(--text-primary);
+min-height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+.top-nav{
+width:100%;
+background:#121212;
+border-bottom:1px solid var(--border-color);
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 50px;
+height:70px;
+box-shadow:0 4px 20px rgba(0,0,0,0.5);
+}
+.tabs{
+display:flex;
+height:100%;
+gap:15px;
+}
+.tab-link{
+display:flex;
+align-items:center;
+padding:0 15px;
+text-decoration:none;
+color:var(--text-secondary);
+font-weight:600;
+font-size:12px;
+text-transform:uppercase;
+letter-spacing:1px;
+position:relative;
+transition:.3s;
+}
+.tab-link:hover{color:white;}
+.tab-link::after{
+content:"";
+position:absolute;
+bottom:0;
+left:50%;
+width:0%;
+height:3px;
+background:var(--accent);
+transition:.3s;
+transform:translateX(-50%);
+}
+.tab-link.active{color:var(--accent);}
+.tab-link.active::after{width:100%;}
+.btn-profile{
+display:flex;
+align-items:center;
+gap:12px;
+background:rgba(255,255,255,0.03);
+border:1px solid var(--border-color);
+padding:6px 16px;
+border-radius:8px;
+cursor:pointer;
+color:var(--text-primary);
+transition:.3s;
+}
+.btn-profile:hover{
+border-color:var(--accent);
+background:rgba(187,134,252,0.05);
+}
+.user-info{text-align:right;}
+.user-label{
+display:block;
+font-size:10px;
+color:var(--text-secondary);
+font-weight:800;
+text-transform:uppercase;
+}
+.user-name{
+display:block;
+font-size:13px;
+font-weight:600;
+}
+.avatar{
+width:24px;
+height:24px;
+background:var(--accent);
+border-radius:4px;
+}
+.main-container{
+width:95%;
+max-width:1100px;
+margin-top:30px;
+margin-bottom:30px;
+border-radius:14px;
+background:linear-gradient(145deg,#1e1e1e,#141414);
+box-shadow:0 15px 50px rgba(0,0,0,.7), inset 0 0 0 1px rgba(255,255,255,.03);
+padding:35px;
+}
+h2{
+margin-bottom:25px;
+color:var(--accent);
+padding-bottom:8px;
+position:relative;
+}
+h2::after{
+content:"";
+width:50px;
+height:2px;
+background:var(--accent);
+position:absolute;
+left:0;
+bottom:0;
+}
+table{
+width:100%;
+border-collapse:collapse;
+}
+th,td{
+padding:14px;
+border-bottom:1px solid var(--border-color);
+text-align:left;
+vertical-align:top;
+}
+th{
+font-size:12px;
+color:var(--accent);
+text-transform:uppercase;
+}
+tbody tr:hover{
+background:rgba(255,255,255,.03);
+}
+.message{
+margin-top:18px;
+font-size:14px;
+font-weight:600;
+color:#cf6679;
+}
+.btn-action{
+padding:12px 20px;
+border-radius:6px;
+border:none;
+cursor:pointer;
+font-weight:600;
+background:#333;
+color:white;
+margin-bottom:20px;
+}
+.btn-action:hover{
+background:#444;
+}
+.search-box{
+margin-bottom:35px;
+padding:22px;
+border:1px solid var(--border-color);
+border-radius:10px;
+background:rgba(255,255,255,.03);
+}
+.search-grid{
+display:grid;
+grid-template-columns:1fr 220px 160px;
+gap:15px;
+align-items:end;
+}
+.search-box label{
+display:block;
+font-size:12px;
+color:var(--text-secondary);
+font-weight:700;
+text-transform:uppercase;
+margin-bottom:6px;
+}
+.search-box input,
+.search-box select{
+width:100%;
+padding:12px;
+border-radius:6px;
+border:1px solid var(--border-color);
+background:#101010;
+color:var(--text-primary);
+}
+.search-summary{
+margin-top:15px;
+font-size:14px;
+color:var(--text-secondary);
+line-height:1.6;
+}
+.search-table{
+margin-top:18px;
+}
+@media(max-width:800px){
+.search-grid{
+grid-template-columns:1fr;
+}
+}
+</style>
+</head>
+
+<body>
+
+<nav class="top-nav">
+    <div class="tabs">
+        <a href="menuUsuario.html" class="tab-link">Início</a>
+        <a href="filmesUsuario.html" class="tab-link active">🎬 Filmes</a>
+        <a href="avaliacaoUsuario.html" class="tab-link">⭐ Minha Avaliação</a>
+        <a href="minhasAvaliacoes.html" class="tab-link">📝 Avaliações</a>
+    </div>
+
+    <button class="btn-profile" type="button" id="btnProfile">
+        <div class="user-info">
+            <span class="user-label">Meu Perfil</span>
+            <span class="user-name" id="userNameLabel">Usuário</span>
+        </div>
+        <div class="avatar"></div>
+    </button>
+</nav>
+
+<div class="main-container">
+
+    <div class="search-box">
+        <h2>Pesquisa Textual</h2>
+
+        <div class="search-grid">
+            <div>
+                <label>Termo</label>
+                <input type="text" id="termoBuscaTextual" placeholder="Ex.: ação, marvel, nolan">
+            </div>
+
+            <div>
+                <label>Algoritmo</label>
+                <select id="algoritmoBuscaTextual">
+                    <option value="kmp">KMP</option>
+                    <option value="bm">Boyer-Moore</option>
+                </select>
+            </div>
+
+            <button class="btn-action" onclick="buscarTextoFilmes()">Buscar</button>
+        </div>
+
+        <div id="resumoBuscaTextual" class="search-summary">
+            Nenhuma pesquisa realizada.
+        </div>
+
+        <table class="search-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Filme</th>
+                    <th>Campo</th>
+                    <th>Ocorrências</th>
+                    <th>Comparações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaBuscaTextual">
+                <tr><td colspan="5">Digite um termo e clique em buscar.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Filmes Cadastrados</h2>
+
+    <button class="btn-action" onclick="carregarFilmes()">Recarregar Lista</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Descrição</th>
+                <th>Lançamento</th>
+                <th>Gêneros</th>
+                <th>Diretores</th>
+                <th>Nota Média</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaFilmes">
+            <tr><td colspan="7">Carregando...</td></tr>
+        </tbody>
+    </table>
+
+    <div id="listaMessage" class="message"></div>
+</div>
+
+<script>
+const API_FILMES = "http://localhost:8080/filmes";
+const API_BUSCA_TEXTUAL = "http://localhost:8080/busca-textual";
+
+let usuarioLogado = null;
+
+try {
+    usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+} catch (e) {
+    usuarioLogado = null;
+}
+
+if (!usuarioLogado) {
+    window.location.href = "index.html";
+}
+
+if (usuarioLogado.administrator === true) {
+    window.location.href = "menuPrincipal.html";
+}
+
+document.getElementById("userNameLabel").textContent =
+    usuarioLogado.username || usuarioLogado.email || "Usuário";
+
+document.getElementById("btnProfile").addEventListener("click", function () {
+    window.location.href = "profile.html";
+});
+
+function showMessage(text) {
+    document.getElementById("listaMessage").textContent = text;
+}
+
+function obterId(filme) {
+    return filme.ID ?? filme.id ?? "-";
+}
+
+function obterTitulo(filme) {
+    return filme.title ?? filme.titulo ?? "-";
+}
+
+function obterDescricao(filme) {
+    return filme.description ?? filme.descricao ?? "-";
+}
+
+function obterDiretores(filme) {
+    if (Array.isArray(filme.directors)) return filme.directors.join(", ");
+    if (typeof filme.diretores === "string") return filme.diretores;
+    if (typeof filme.directors === "string") return filme.directors;
+    return "-";
+}
+
+function obterDataLancamento(filme) {
+    return filme.releaseDate ?? filme.dataLancamento ?? "";
+}
+
+async function obterGenerosNome(filme) {
+    if (Array.isArray(filme.generos) && filme.generos.length > 0) {
+        const nomes = filme.generos
+            .filter(g => g && g !== "-")
+            .map(g => String(g).trim())
+            .filter(g => g.length > 0);
+
+        if (nomes.length > 0) {
+            return nomes.join(", ");
+        }
+    }
+
+    const id = obterId(filme);
+
+    if (!id || id === "-") {
+        return "-";
+    }
+
+    try {
+        const response = await fetch(`${API_FILMES}/${id}/generos/detalhes`);
+        const data = await response.json();
+
+        if (!response.ok || !Array.isArray(data) || data.length === 0) {
+            return "-";
+        }
+
+        const nomes = data
+            .map(g => g.name ?? g.nome)
+            .filter(g => g && String(g).trim().length > 0)
+            .map(g => String(g).trim());
+
+        return nomes.length > 0 ? nomes.join(", ") : "-";
+
+    } catch (e) {
+        return "-";
+    }
+}
+
+function formatarData(valor) {
+    if (!valor) return "-";
+    const texto = String(valor);
+
+    if (/^\d{8}$/.test(texto)) {
+        return `${texto.substring(6, 8)}/${texto.substring(4, 6)}/${texto.substring(0, 4)}`;
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+        const [ano, mes, dia] = texto.split("-");
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    return texto;
+}
+
+function obterNotaMedia(filme) {
+    const nota = filme.rating ?? filme.notaMedia ?? filme.media ?? 0;
+    return Number(nota).toFixed(1);
+}
+
+async function carregarFilmes() {
+    showMessage("");
+    const tabela = document.getElementById("tabelaFilmes");
+    tabela.innerHTML = `<tr><td colspan="7">Carregando...</td></tr>`;
+
+    try {
+        const response = await fetch(API_FILMES);
+        const data = await response.json();
+
+        if (!response.ok) {
+            tabela.innerHTML = `<tr><td colspan="7">Erro ao carregar filmes.</td></tr>`;
+            showMessage(data?.message || "Erro ao carregar filmes.");
+            return;
+        }
+
+        if (!Array.isArray(data) || data.length === 0) {
+            tabela.innerHTML = `<tr><td colspan="7">Nenhum filme cadastrado.</td></tr>`;
+            return;
+        }
+
+        const linhas = await Promise.all(data.map(async filme => {
+            const generos = await obterGenerosNome(filme);
+
+            return `
+                <tr>
+                    <td>${obterId(filme)}</td>
+                    <td>${obterTitulo(filme)}</td>
+                    <td>${obterDescricao(filme)}</td>
+                    <td>${formatarData(obterDataLancamento(filme))}</td>
+                    <td>${generos}</td>
+                    <td>${obterDiretores(filme)}</td>
+                    <td>${obterNotaMedia(filme)}</td>
+                </tr>
+            `;
+        }));
+
+        tabela.innerHTML = linhas.join("");
+
+    } catch (e) {
+        tabela.innerHTML = `<tr><td colspan="7">Erro ao conectar com o servidor.</td></tr>`;
+        showMessage("Erro ao conectar com o servidor.");
+    }
+}
+
+async function buscarTextoFilmes() {
+    const termo = document.getElementById("termoBuscaTextual").value.trim();
+    const algoritmo = document.getElementById("algoritmoBuscaTextual").value;
+    const resumo = document.getElementById("resumoBuscaTextual");
+    const tabela = document.getElementById("tabelaBuscaTextual");
+
+    if (!termo) {
+        resumo.innerHTML = "Digite um termo para pesquisar.";
+        tabela.innerHTML = `<tr><td colspan="5">Nenhuma pesquisa realizada.</td></tr>`;
+        return;
+    }
+
+    tabela.innerHTML = `<tr><td colspan="5">Buscando...</td></tr>`;
+
+    try {
+        const response = await fetch(
+            `${API_BUSCA_TEXTUAL}/${algoritmo}/filmes?termo=${encodeURIComponent(termo)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || data.message) {
+            resumo.innerHTML = data.message || "Erro ao realizar busca.";
+            tabela.innerHTML = `<tr><td colspan="5">Erro na pesquisa.</td></tr>`;
+            return;
+        }
+
+        if (!Array.isArray(data) || data.length === 0) {
+            resumo.innerHTML = `
+                <strong>Termo:</strong> ${termo}<br>
+                <strong>Algoritmo:</strong> ${algoritmo === "kmp" ? "KMP" : "Boyer-Moore"}<br>
+                <strong>Resultados encontrados:</strong> 0
+            `;
+
+            tabela.innerHTML = `<tr><td colspan="5">Nenhuma ocorrência encontrada.</td></tr>`;
+            return;
+        }
+
+        let totalOcorrencias = 0;
+        let totalComparacoes = 0;
+
+        const agrupado = {};
+
+        data.forEach(item => {
+            const id = item.filmID;
+
+            if (!agrupado[id]) {
+                agrupado[id] = {
+                    filmID: item.filmID,
+                    titulo: item.titulo,
+                    campo: item.campo || "Geral",
+                    ocorrencias: 0,
+                    comparacoes: 0
+                };
+            }
+
+            const ocorr = item.quantidadeOcorrencias || 0;
+            const comp = item.comparacoes || 0;
+
+            agrupado[id].ocorrencias += ocorr;
+            agrupado[id].comparacoes += comp;
+
+            totalOcorrencias += ocorr;
+            totalComparacoes += comp;
+        });
+
+        resumo.innerHTML = `
+            <strong>Termo:</strong> ${termo}<br>
+            <strong>Algoritmo:</strong> ${data[0].algoritmo}<br>
+            <strong>Resultados encontrados:</strong> ${Object.keys(agrupado).length}<br>
+            <strong>Total de ocorrências:</strong> ${totalOcorrencias}<br>
+            <strong>Total de comparações:</strong> ${totalComparacoes}
+        `;
+
+        tabela.innerHTML = Object.values(agrupado).map(item => `
+            <tr>
+                <td>${item.filmID}</td>
+                <td>${item.titulo}</td>
+                <td>${item.campo}</td>
+                <td>${item.ocorrencias}</td>
+                <td>${item.comparacoes}</td>
+            </tr>
+        `).join("");
+
+    } catch (e) {
+        resumo.innerHTML = "Erro ao conectar com o servidor.";
+        tabela.innerHTML = `<tr><td colspan="5">Erro ao conectar com o servidor.</td></tr>`;
+    }
+}
+
+window.addEventListener("load", carregarFilmes);
+</script>
+
+</body>
+</html>
