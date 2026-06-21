@@ -68,10 +68,13 @@ O sistema possui dois tipos de usuários:
 - Criação de avaliações
 - Visualização de avaliações
 - Possibilidade de ordenar por meio da ordenação externa
+- Casamento de padrões
 
 ### 🛠️ Administrador
 
-Possui todas as permissões de um usuário (menos uso da ordenação externa).
+- Acesso à própria conta
+- Criação de avaliações
+- Visualização de avaliações
 
 Acesso completo aos CRUDs:
 
@@ -80,8 +83,8 @@ Acesso completo aos CRUDs:
 - Filmes
 - Avaliações
 
-Possibilidade de ordenar por meio da Árvore B+.
-Possibilidade de fazer backups compactados.
+-Possibilidade de ordenar por meio da Árvore B+.
+-Possibilidade de fazer backups compactados.
 
 ---
 
