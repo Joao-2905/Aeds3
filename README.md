@@ -65,16 +65,17 @@ O sistema possui dois tipos de usuários:
 ### 👥 Usuário
 
 - Acesso à própria conta
+- Visualizar filmes
 - Criação de avaliações
-- Visualização de avaliações
-- Possibilidade de ordenar por meio da ordenação externa
-- Casamento de padrões
+- Editar avaliações próprias
+- Excluir avaliações próprias
+- Visualização de avaliações próprias e de outro usuários.
+- Possibilidade de ordenar as avaliações por meio da ordenação externa
+- Busca textual utilizando KMP
+- Busca textual utilizando Boyer-Moore
 
 ### 🛠️ Administrador
-
-- Acesso à própria conta
-- Criação de avaliações
-- Visualização de avaliações
+Possui todas as funcionalidades do usuário comum, exceto a Ordenação Externa e Busca Textual, e também:
 
 Acesso completo aos CRUDs:
 
@@ -82,9 +83,20 @@ Acesso completo aos CRUDs:
 - Gêneros
 - Filmes
 - Avaliações
+- Possibilidade de ordenar avaliações por meio da Árvore B+.
+- Possibilidade de fazer backups compactados e restaurá-los utilizando Huffman e LZW
 
--Possibilidade de ordenar por meio da Árvore B+.
--Possibilidade de fazer backups compactados.
+---
+
+## 🔒 Criptografia
+
+Foi implementada criptografia XOR utilizando a chave:
+
+```text
+AEDS3
+```
+
+A criptografia é aplicada ao campo `password` da entidade `User`, evitando que as senhas sejam armazenadas em texto puro nos arquivos binários.
 
 ---
 
